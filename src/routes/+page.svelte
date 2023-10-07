@@ -56,7 +56,8 @@
 
     scene.add(moon);
 
-    camera.position.z = 2;
+	
+
 
     function animate() {
       requestAnimationFrame(animate);
@@ -73,6 +74,13 @@
 
   let usedManual = false;
   let dragStart = { x: 0, y: 0 };
+
+  function onMouseScroll(event: WheelEvent){
+		const zoom = Math.min(8, Math.max(1.5, camera.position.z + event.deltaY/1000))
+		camera.position.z = zoom;
+		console.log(event.deltaY);
+
+	}
 
   function onMouseMove(event: MouseEvent) {
     if (event.buttons === 1) {
@@ -101,7 +109,7 @@
   }
 </script>
 
-<canvas bind:this={renderCanvas} on:mousemove={onMouseMove} />
+<canvas bind:this={renderCanvas} on:mousemove={onMouseMove} on:wheel={onMouseScroll} />
 
 <div class="absolute top-2 left-2 bg-base-200 rounded-full p-3">
   <details class="dropdown">
