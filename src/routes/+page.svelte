@@ -57,21 +57,13 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    const texture = new THREE.TextureLoader().load("/moontexture.jpg");
-    const normalMap = new THREE.TextureLoader().load("moonnormal.jpg");
 
-    const geometry = new THREE.SphereGeometry();
-    const material = new THREE.MeshStandardMaterial({
-      map: texture,
-      normalMap: normalMap,
-    });
-    moon = new THREE.Mesh(geometry, material);
+
 
     const light = new THREE.DirectionalLight(0xffffff, lightIntensity);
     light.position.set(0, 0, 1);
     scene.add(light);
 
-    scene.add(moon);
 
     function animate() {
       requestAnimationFrame(animate);
