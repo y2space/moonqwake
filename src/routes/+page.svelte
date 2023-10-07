@@ -10,6 +10,7 @@
 	let moon: THREE.Mesh;
 	let camera: THREE.PerspectiveCamera;
 	let light: THREE.DirectionalLight;
+    let skybox: THREE.Mesh;
 
 	let lightIntensity: number;
 	let currentTime = new Date();
@@ -36,6 +37,7 @@
 
 		moon = models.moon;
 		light = models.light;
+        skybox = models.skybox;
 		camera.position.z = 3;
 
 		function animate() {
@@ -46,9 +48,6 @@
 				moon.rotation.y += 0.001;
 				moon.rotation.x += 0.0005;
 			}
-
-			models.skybox.rotation.y += 0.001;
-			models.skybox.rotation.x += 0.0005;
 		}
 
 		animate();
@@ -56,6 +55,7 @@
 
 	let usedManual = false;
 	let dragStart = { x: 0, y: 0 };
+    let skyboxOffset = { x: 0, y: 0};
 
 	function onMouseScroll(event: WheelEvent) {
 		const zoom = Math.min(
@@ -67,6 +67,19 @@
 	}
 
 	function onMouseMove(event: MouseEvent) {
+        function clamp(x: number, a: number, b: number) {
+           return Math.min(Math.max(x, b), a);
+        }
+
+        const parralaxAmount = 10000;
+        const maxAmount = 0.1;
+        const deltaY = (window.innerHeight / 2 - event.clientY) / parralaxAmount;
+        const deltaX = (window.innerWidth / 2 - event.clientX) / parralaxAmount;
+        
+        skybox.rotation.y = -clamp(skyboxOffset.x + deltaX, maxAmount, -maxAmount);
+        skybox.rotation.x = -clamp(skyboxOffset.y + deltaY, maxAmount, -maxAmount);
+        
+
 		if (event.buttons === 1) {
 			const deltaRotationQuaternion = new THREE.Quaternion()
 				.setFromEuler(
