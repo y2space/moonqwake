@@ -10,7 +10,7 @@ export function createScene(scene: THREE.Scene) {
 
 	const moonTexture = new THREE.TextureLoader().load('/lroc_color_poles_4k.jpg');
 	const moonNormalMap = new THREE.TextureLoader().load('/ldem_16_uint.jpg');
-	const moonGeometry = new THREE.SphereGeometry();
+	const moonGeometry = new THREE.SphereGeometry(1, 50, 50);
 	const moonMaterial = new THREE.MeshStandardMaterial({
 		map: moonTexture,
 		normalMap: moonNormalMap,
