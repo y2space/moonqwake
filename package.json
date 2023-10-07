@@ -25,16 +25,11 @@
 	},
 	"type": "module",
 	"dependencies": {
-<<<<<<< HEAD
 		"@sveltejs/adapter-cloudflare": "^2.3.3",
 		"autoprefixer": "^10.4.16",
 		"daisyui": "^3.9.2",
 		"postcss": "^8.4.31",
 		"tailwindcss": "^3.3.3",
 		"three": "^0.157.0"
-=======
-		"three": "^0.157.0",
-		"@sveltejs/adapter-cloudflare": "^2.3.3"
->>>>>>> d00bc877b7573f57ed0df2ff7b34731fb5c068e4
 	}
 }
