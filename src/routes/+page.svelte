@@ -1,183 +1,107 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import * as THREE from "three";
+	import Controls from '$lib/components/Controls.svelte';
+	import { MONTHS } from '$lib/constants';
+	import { createScene } from '$lib/render';
 
-  let renderCanvas: HTMLCanvasElement;
-  let moon: THREE.Mesh;
-  let camera: THREE.PerspectiveCamera;
+	import { onMount } from 'svelte';
+	import * as THREE from 'three';
 
-  let lightIntensity = 1.4;
-  let currentTime = new Date();
+	let renderCanvas: HTMLCanvasElement;
+	let moon: THREE.Mesh;
+	let camera: THREE.PerspectiveCamera;
+	let light: THREE.DirectionalLight;
 
-  const MONTHS = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+	let lightIntensity: number;
+	let currentTime = new Date();
 
-  onMount(() => {
-    const scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
+	$: if (light) light.intensity = lightIntensity / 20;
 
-    const skyboxTexture = new THREE.TextureLoader().load("/stars.jpg");
-    const skyboxGeometry = new THREE.SphereGeometry(10);
-    const skyboxMaterial = new THREE.MeshBasicMaterial({ map: skyboxTexture });
-    const skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
-    skybox.material.side = THREE.DoubleSide;
-    scene.add(skybox);
+	onMount(() => {
+		const scene = new THREE.Scene();
+		const renderer = new THREE.WebGL1Renderer({
+			canvas: renderCanvas,
+		});
 
-    const moonTexture = new THREE.TextureLoader().load("/moontexture.jpg");
-    const moonNormalMap = new THREE.TextureLoader().load("/moonnormal.jpg");
-    const moonGeometry = new THREE.SphereGeometry();
-    const moonMaterial = new THREE.MeshStandardMaterial({
-      map: moonTexture,
-      normalMap: moonNormalMap,
-    });
-    moon = new THREE.Mesh(moonGeometry, moonMaterial);
-    scene.add(moon);
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
 
-    const renderer = new THREE.WebGL1Renderer({
-      canvas: renderCanvas,
-    });
+		camera = new THREE.PerspectiveCamera(
+			75,
+			window.innerWidth / window.innerHeight,
+			0.1,
+			1000
+		);
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+		const models = createScene(scene);
 
+		moon = models.moon;
+		light = models.light;
+		camera.position.z = 3;
 
+		function animate() {
+			requestAnimationFrame(animate);
+			renderer.render(scene, camera);
 
+			if (!usedManual) {
+				moon.rotation.y += 0.001;
+				moon.rotation.x += 0.0005;
+			}
 
-    const light = new THREE.DirectionalLight(0xffffff, lightIntensity);
-    light.position.set(0, 0, 1);
-    scene.add(light);
+			models.skybox.rotation.y += 0.001;
+			models.skybox.rotation.x += 0.0005;
+		}
 
+		animate();
+	});
 
-    function animate() {
-      requestAnimationFrame(animate);
-      renderer.render(scene, camera);
+	let usedManual = false;
+	let dragStart = { x: 0, y: 0 };
 
-      if (!usedManual) {
-        moon.rotation.y += 0.001;
-        moon.rotation.x += 0.0005;
-      }
-      skybox.rotation.y += 0.001;
-      skybox.rotation.x += 0.0005;
-    }
+	function onMouseScroll(event: WheelEvent) {
+		const zoom = Math.min(
+			8,
+			Math.max(1.5, camera.position.z + event.deltaY / 1000)
+		);
+		camera.position.z = zoom;
+		console.log(event.deltaY);
+	}
 
-    animate();
-  });
+	function onMouseMove(event: MouseEvent) {
+		if (event.buttons === 1) {
+			const deltaRotationQuaternion = new THREE.Quaternion()
+				.setFromEuler(
+					new THREE.Euler(
+						((event.clientY - dragStart.y) * Math.PI) / 180,
+						((event.clientX - dragStart.x) * Math.PI) / 180,
+						0,
+						'XYZ'
+					)
+				)
+				.normalize();
 
-  let usedManual = false;
-  let dragStart = { x: 0, y: 0 };
+			moon.quaternion.multiplyQuaternions(
+				deltaRotationQuaternion,
+				moon.quaternion
+			);
 
-  function onMouseScroll(event: WheelEvent) {
-    const zoom = Math.min(
-      8,
-      Math.max(1.5, camera.position.z + event.deltaY / 1000)
-    );
-    camera.position.z = zoom;
-    console.log(event.deltaY);
-  }
+			usedManual = true;
+		} else {
+			usedManual = false;
+		}
 
-  function onMouseMove(event: MouseEvent) {
-    if (event.buttons === 1) {
-      const deltaRotationQuaternion = new THREE.Quaternion()
-        .setFromEuler(
-          new THREE.Euler(
-            ((event.clientY - dragStart.y) * Math.PI) / 180,
-            ((event.clientX - dragStart.x) * Math.PI) / 180,
-            0,
-            "XYZ"
-          )
-        )
-        .normalize();
-
-      moon.quaternion.multiplyQuaternions(
-        deltaRotationQuaternion,
-        moon.quaternion
-      );
-
-      usedManual = true;
-    } else {
-      usedManual = false;
-    }
-
-    dragStart = { x: event.clientX, y: event.clientY };
-  }
+		dragStart = { x: event.clientX, y: event.clientY };
+	}
 </script>
 
 <canvas
-  bind:this={renderCanvas}
-  on:mousemove={onMouseMove}
-  on:wheel={onMouseScroll}
+	bind:this={renderCanvas}
+	on:mousemove={onMouseMove}
+	on:wheel={onMouseScroll}
 />
 
-<div class="absolute top-2 left-2 bg-base-200 rounded-full p-3">
-  <details class="dropdown">
-    <summary class="m-1 btn">Controls</summary>
-    <ul
-      class="p-5 shadow dropdown-content z-[1] bg-base-100 rounded-box w-80 grid grid-cols-4 gap-4"
-    >
-      <div class="text-2xl col-span-3">
-        World Axes
-        <br />X-axis :
-        <span class="text-orange-400">Orange</span>
-        <br />Y-axis :
-        <span class="text-green-400">Green</span>
-        <br />Z-axis :
-        <span class="text-yellow-400">Yellow</span>
-      </div>
-      <input
-        type="checkbox"
-        class="toggle toggle-primary self-center"
-        checked
-      />
-      <div class="text-2xl col-span-3">Longitude & Latitude</div>
-      <input type="checkbox" class="toggle toggle-success" checked />
-      <div class="text-2xl col-span-3">Height Map</div>
-      <input type="checkbox" class="toggle toggle-warning" checked />
-      <div class="text-2xl col-span-3">Apollo Landers</div>
-      <input type="checkbox" class="toggle toggle-info" checked />
-      <div class="text-2xl col-span-3">Seas & Oceans</div>
-      <input type="checkbox" class="toggle toggle-error" checked />
-      <div class="text-2xl col-span-4">
-        Directional Light Intensity <br />
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value="50"
-          class="range range-warning"
-        />
-      </div>
-      <div class="text-2xl col-span-4">
-        Ambient Light Intensity <br />
-        <input
-          type="range"
-          min="0"
-          max="5"
-          value="3"
-          class="range range-success"
-        />
-      </div>
-    </ul>
-  </details>
-</div>
+<Controls bind:lightIntensity />
 
 <div class="absolute bottom-2 right-2 text-white rounded-full p-3">
-  {MONTHS[currentTime.getMonth()]}
-  {currentTime.getDate()}, {currentTime.getFullYear()}
+	{MONTHS[currentTime.getMonth()]}
+	{currentTime.getDate()}, {currentTime.getFullYear()}
 </div>
