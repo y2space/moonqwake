@@ -20,12 +20,16 @@
 
 	$: if (light) light.intensity = lightIntensity / 20;
 	$: {
-		if (playTimeline) lastPlayed = setInterval(increaseTimeline, 1000);
-		else clearInterval(lastPlayed);
+		if (playTimeline) updateTimeline();
+		else clearTimeline();
 	}
 
-	function increaseTimeline() {
-		return (timelineValue += 1);
+	function clearTimeline() {
+		clearInterval(lastPlayed);
+	}
+
+	function updateTimeline() {
+		lastPlayed = setInterval(() => (timelineValue += 10), 10);
 	}
 
 	onMount(() => {
@@ -143,7 +147,7 @@
 	<input
 		type="range"
 		min="0"
-		max="100"
+		max="25000"
 		bind:value={timelineValue}
 		class="range w-full mx-auto"
 	/>
