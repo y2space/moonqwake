@@ -58,9 +58,10 @@
 	let dragStart = { x: 0, y: 0 };
 
 	function onMouseScroll(event: WheelEvent) {
+    event.preventDefault();
 		const zoom = Math.min(
 			8,
-			Math.max(1.5, camera.position.z + event.deltaY / 1000)
+			Math.max(1.5, camera.position.z + Math.sign(event.deltaY)*70 / 1000)
 		);
 		camera.position.z = zoom;
 		console.log(event.deltaY);
