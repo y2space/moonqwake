@@ -1,16 +1,16 @@
 <script lang="ts">
-	import Controls from '$lib/components/Controls.svelte';
-	import { MONTHS } from '$lib/constants';
-	import { createScene } from '$lib/render';
+	import Controls from "$lib/components/Controls.svelte";
+	import { MONTHS } from "$lib/constants";
+	import { createScene } from "$lib/render";
 
-	import { onMount } from 'svelte';
-	import * as THREE from 'three';
+	import { onMount } from "svelte";
+	import * as THREE from "three";
 
 	let renderCanvas: HTMLCanvasElement;
 	let moon: THREE.Mesh;
 	let camera: THREE.PerspectiveCamera;
 	let light: THREE.DirectionalLight;
-    let skybox: THREE.Mesh;
+	let skybox: THREE.Mesh;
 
 	let lightIntensity: number;
 	let currentTime = new Date();
@@ -37,7 +37,7 @@
 
 		moon = models.moon;
 		light = models.light;
-        skybox = models.skybox;
+		skybox = models.skybox;
 		camera.position.z = 3;
 
 		function animate() {
@@ -55,32 +55,19 @@
 
 	let usedManual = false;
 	let dragStart = { x: 0, y: 0 };
-    let skyboxOffset = { x: 0, y: 0};
+	let dragEnd = { x: 0, y: 0 };
 
 	function onMouseScroll(event: WheelEvent) {
-    event.preventDefault();
+		event.preventDefault();
 		const zoom = Math.min(
 			8,
-			Math.max(1.5, camera.position.z + Math.sign(event.deltaY)*70 / 1000)
+			Math.max(1.5, camera.position.z + (Math.sign(event.deltaY) * 70) / 1000)
 		);
 		camera.position.z = zoom;
 		console.log(event.deltaY);
 	}
 
 	function onMouseMove(event: MouseEvent) {
-        function clamp(x: number, a: number, b: number) {
-           return Math.min(Math.max(x, b), a);
-        }
-
-        const parralaxAmount = 10000;
-        const maxAmount = 0.1;
-        const deltaY = (window.innerHeight / 2 - event.clientY) / parralaxAmount;
-        const deltaX = (window.innerWidth / 2 - event.clientX) / parralaxAmount;
-        
-        skybox.rotation.y = -clamp(skyboxOffset.x + deltaX, maxAmount, -maxAmount);
-        skybox.rotation.x = -clamp(skyboxOffset.y + deltaY, maxAmount, -maxAmount);
-        
-
 		if (event.buttons === 1) {
 			const deltaRotationQuaternion = new THREE.Quaternion()
 				.setFromEuler(
@@ -88,7 +75,7 @@
 						((event.clientY - dragStart.y) * Math.PI) / 180,
 						((event.clientX - dragStart.x) * Math.PI) / 180,
 						0,
-						'XYZ'
+						"XYZ"
 					)
 				)
 				.normalize();
@@ -98,8 +85,27 @@
 				moon.quaternion
 			);
 
+			skybox.quaternion.multiplyQuaternions(
+				deltaRotationQuaternion,
+				skybox.quaternion
+			);
+
+			dragEnd = { x: skybox.rotation.x, y: skybox.rotation.y };
+
 			usedManual = true;
 		} else {
+			function clamp(x: number, a: number, b: number) {
+				return Math.min(Math.max(x, b), a);
+			}
+
+			const parralaxAmount = 100000;
+			const maxAmount = 0.02;
+			const deltaY = (window.innerHeight / 2 - event.clientY) / parralaxAmount;
+			const deltaX = (window.innerWidth / 2 - event.clientX) / parralaxAmount;
+
+			skybox.rotation.y = dragEnd.y - clamp(deltaX, maxAmount, -maxAmount);
+			skybox.rotation.x = dragEnd.x - clamp(deltaY, maxAmount, -maxAmount);
+
 			usedManual = false;
 		}
 
