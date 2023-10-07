@@ -11,6 +11,7 @@
 	let camera: THREE.PerspectiveCamera;
 	let light: THREE.DirectionalLight;
 	let skybox: THREE.Mesh;
+	let renderer: THREE.WebGL1Renderer;
 
 	let lightIntensity: number;
 	let currentTime = new Date();
@@ -18,10 +19,28 @@
 	let timelineValue = 0;
 	let lastPlayed: number;
 
+	let innerWidth: number;
+	let innerHeight: number;
+
+	let startTime = new Date(0);
+	let endTime = new Date(Date.now());
+
+	const TIME_STEPS = 25_000;
+
+	let stepSize = (endTime.getTime() - startTime.getTime()) / TIME_STEPS;
+
 	$: if (light) light.intensity = lightIntensity / 20;
 	$: {
 		if (playTimeline) updateTimeline();
 		else clearTimeline();
+	}
+	$: if (renderer && camera) {
+		renderer.setSize(innerWidth, innerHeight);
+		camera.aspect = innerWidth / innerHeight;
+		camera.updateProjectionMatrix();
+	}
+	$: {
+		currentTime = new Date(startTime.getTime() + timelineValue * stepSize);
 	}
 
 	function clearTimeline() {
@@ -29,12 +48,18 @@
 	}
 
 	function updateTimeline() {
-		lastPlayed = setInterval(() => (timelineValue += 10), 10);
+		lastPlayed = setInterval(() => {
+			if (timelineValue + 10 >= TIME_STEPS) {
+				return clearTimeline();
+			}
+
+			timelineValue += 10;
+		}, 10);
 	}
 
 	onMount(() => {
 		const scene = new THREE.Scene();
-		const renderer = new THREE.WebGL1Renderer({
+		renderer = new THREE.WebGL1Renderer({
 			canvas: renderCanvas,
 		});
 
@@ -74,6 +99,7 @@
 
 	function onMouseScroll(event: WheelEvent) {
 		event.preventDefault();
+
 		const zoom = Math.min(
 			8,
 			Math.max(1.5, camera.position.z + (Math.sign(event.deltaY) * 70) / 1000)
@@ -128,33 +154,37 @@
 	}
 </script>
 
-<canvas
-	bind:this={renderCanvas}
-	on:mousemove={onMouseMove}
-	on:wheel={onMouseScroll}
-/>
+<svelte:window on:wheel={onMouseScroll} bind:innerWidth bind:innerHeight />
+
+<canvas bind:this={renderCanvas} on:mousemove={onMouseMove} />
 
 <Controls bind:lightIntensity />
 
-<div class="absolute bottom-2 right-2 text-white rounded-full p-3">
+<div class="absolute top-2 right-2 text-white rounded-full p-3">
 	{MONTHS[currentTime.getMonth()]}
 	{currentTime.getDate()}, {currentTime.getFullYear()}
 </div>
 
 <div
-	class="absolute text-white rounded-full p-3 left-0 right-0 bottom-24 grid w-full"
+	class="absolute text-white rounded-full left-0 right-0 bottom-5 grid w-full place-items-center"
 >
-	<input
-		type="range"
-		min="0"
-		max="25000"
-		bind:value={timelineValue}
-		class="range w-full mx-auto"
-	/>
+	<div class="w-full max-w-md flex flex-row gap-2">
+		<label class="swap">
+			<input type="checkbox" bind:checked={playTimeline} />
+			<svg class="fill-current w-6 h-6 swap-off" viewBox="0 0 24 24">
+				<path d="M8 5v14l11-7z" />
+			</svg>
+			<svg class="fill-current w-6 h-6 swap-on" viewBox="0 0 24 24">
+				<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+			</svg>
+		</label>
 
-	<input
-		type="checkbox"
-		class="toggle toggle-success"
-		bind:checked={playTimeline}
-	/>
+		<input
+			type="range"
+			min={0}
+			max={TIME_STEPS}
+			bind:value={timelineValue}
+			class="range w-full max-w-sm"
+		/>
+	</div>
 </div>
