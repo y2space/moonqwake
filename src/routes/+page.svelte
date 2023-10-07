@@ -36,3 +36,7 @@
 		animate();
 	});
 </script>
+
+<div class="absolute top-2 left-2 bg-base-200 rounded-full p-3">
+	hello world
+</div>
