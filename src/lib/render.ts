@@ -8,12 +8,13 @@ export function createScene(scene: THREE.Scene) {
 	skybox.material.side = THREE.DoubleSide;
 	scene.add(skybox);
 
-	const moonTexture = new THREE.TextureLoader().load('/moontexture.jpg');
-	const moonNormalMap = new THREE.TextureLoader().load('/moonnormal.jpg');
+	const moonTexture = new THREE.TextureLoader().load('/lroc_color_poles_4k.jpg');
+	const moonNormalMap = new THREE.TextureLoader().load('/ldem_16_uint.jpg');
 	const moonGeometry = new THREE.SphereGeometry();
 	const moonMaterial = new THREE.MeshStandardMaterial({
 		map: moonTexture,
 		normalMap: moonNormalMap,
+		normalScale: new THREE.Vector2(4, 4),
 	});
 	const moon = new THREE.Mesh(moonGeometry, moonMaterial);
 	scene.add(moon);
