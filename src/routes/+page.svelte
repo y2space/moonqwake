@@ -21,9 +21,16 @@
 		document.body.appendChild(renderer.domElement);
 
 		const texture = new THREE.TextureLoader().load('/moontexture.jpg');
+        const normalMap = new THREE.TextureLoader().load('moonnormal.jpg');
+
 		const geometry = new THREE.SphereGeometry();
-		const material = new THREE.MeshBasicMaterial({ map: texture });
+		const material = new THREE.MeshStandardMaterial({ map: texture, normalMap: normalMap});
 		const cube = new THREE.Mesh(geometry, material);
+
+        const light = new THREE.DirectionalLight(0xffffff, 1.4);
+        light.position.set(0, 0, 1);
+        scene.add(light);
+
 
 		scene.add(cube);
 		camera.position.z = 5;
@@ -31,6 +38,8 @@
 		function animate() {
 			requestAnimationFrame(animate);
 			renderer.render(scene, camera);
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
 		}
 
 		animate();
