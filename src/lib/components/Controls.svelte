@@ -1,5 +1,6 @@
 <script lang="ts">
 	export let lightIntensity = 1.4 * 20;
+	export let showAxes = false;
 </script>
 
 <div class="absolute top-2 left-2">
@@ -11,16 +12,16 @@
 			<div class="col-span-3">
 				World Axes
 				<br />X-axis :
-				<span class="text-orange-400">Orange</span>
+				<span class="text-red-400">Red</span>
 				<br />Y-axis :
 				<span class="text-green-400">Green</span>
 				<br />Z-axis :
-				<span class="text-yellow-400">Yellow</span>
+				<span class="text-blue-400">Blue</span>
 			</div>
 			<input
 				type="checkbox"
 				class="toggle toggle-primary self-center"
-				checked
+				bind:checked={showAxes}
 			/>
 			<div class="col-span-3">Longitude & Latitude</div>
 			<input type="checkbox" class="toggle toggle-success" checked />

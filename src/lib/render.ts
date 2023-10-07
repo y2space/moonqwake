@@ -23,9 +23,13 @@ export function createScene(scene: THREE.Scene) {
 	light.position.set(0, 0, 1);
 	scene.add(light);
 
+	const axesHelper = new THREE.AxesHelper(5000);
+	moon.add(axesHelper);
+
 	return {
 		light,
 		moon,
 		skybox,
+		axesHelper,
 	};
 }

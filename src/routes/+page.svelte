@@ -12,8 +12,11 @@
 	let light: THREE.DirectionalLight;
 	let skybox: THREE.Mesh;
 	let renderer: THREE.WebGL1Renderer;
+	let axesHelper: THREE.AxesHelper;
 
 	let lightIntensity: number;
+	let showAxes = false;
+
 	let currentTime = new Date();
 	let playTimeline = false;
 	let timelineValue = 0;
@@ -42,6 +45,10 @@
 	$: {
 		currentTime = new Date(startTime.getTime() + timelineValue * stepSize);
 	}
+	$: if (moon && axesHelper) {
+		if (showAxes) moon.add(axesHelper);
+		else moon.remove(axesHelper);
+	}
 
 	function clearTimeline() {
 		clearInterval(lastPlayed);
@@ -61,6 +68,7 @@
 		const scene = new THREE.Scene();
 		renderer = new THREE.WebGL1Renderer({
 			canvas: renderCanvas,
+			antialias: true,
 		});
 
 		renderer.setSize(window.innerWidth, window.innerHeight);
@@ -78,6 +86,7 @@
 		moon = models.moon;
 		light = models.light;
 		skybox = models.skybox;
+		axesHelper = models.axesHelper;
 		camera.position.z = 3;
 
 		function animate() {
@@ -158,7 +167,7 @@
 
 <canvas bind:this={renderCanvas} on:mousemove={onMouseMove} />
 
-<Controls bind:lightIntensity />
+<Controls bind:lightIntensity bind:showAxes />
 
 <div class="absolute top-2 right-2 text-white rounded-full p-3">
 	{MONTHS[currentTime.getMonth()]}
