@@ -1,7 +1,6 @@
-
-<script lang='ts'>
-    import { onMount } from 'svelte';
-    import * as THREE from 'three';
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import * as THREE from 'three';
 
     
     onMount(() => {
@@ -12,8 +11,7 @@
         const loader = new THREE.TextureLoader();
         let texture = new THREE.TextureLoader().load('/moontexture.jpg');
 
-        renderer.setSize( window.innerWidth, window.innerHeight );
-        document.body.appendChild( renderer.domElement ); 
+		camera.position.z = 5;
 
         const geometry = new THREE.SphereGeometry();
         const material = new THREE.MeshBasicMaterial({map: texture});
