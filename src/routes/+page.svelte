@@ -2,6 +2,8 @@
 	import { onMount } from 'svelte';
 	import * as THREE from 'three';
 
+	let renderCanvas: HTMLCanvasElement;
+
 	onMount(() => {
 		const scene = new THREE.Scene();
 		const camera = new THREE.PerspectiveCamera(
@@ -11,31 +13,31 @@
 			1000
 		);
 
-		const renderer = new THREE.WebGL1Renderer();
+		const renderer = new THREE.WebGL1Renderer({
+			canvas: renderCanvas,
+		});
 
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		document.body.appendChild(renderer.domElement);
 
 		const texture = new THREE.TextureLoader().load('/moontexture.jpg');
-
-		camera.position.z = 5;
-
 		const geometry = new THREE.SphereGeometry();
 		const material = new THREE.MeshBasicMaterial({ map: texture });
 		const cube = new THREE.Mesh(geometry, material);
-		scene.add(cube);
 
+		scene.add(cube);
 		camera.position.z = 5;
 
 		function animate() {
 			requestAnimationFrame(animate);
 			renderer.render(scene, camera);
-			cube.rotation.x += 0.01;
-			cube.rotation.y += 0.01;
 		}
+
 		animate();
 	});
 </script>
+
+<canvas bind:this={renderCanvas} />
 
 <div class="absolute top-2 left-2 bg-base-200 rounded-full p-3">
 	hello world
