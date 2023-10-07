@@ -4,10 +4,29 @@
 
 	let renderCanvas: HTMLCanvasElement;
 	let moon: THREE.Mesh;
+	let camera: THREE.PerspectiveCamera;
+
+	let lightIntensity = 1.4;
+	let currentTime = new Date();
+
+	const MONTHS = [
+		'January',
+		'February',
+		'March',
+		'April',
+		'May',
+		'June',
+		'July',
+		'August',
+		'September',
+		'October',
+		'November',
+		'December',
+	];
 
 	onMount(() => {
 		const scene = new THREE.Scene();
-		const camera = new THREE.PerspectiveCamera(
+		camera = new THREE.PerspectiveCamera(
 			75,
 			window.innerWidth / window.innerHeight,
 			0.1,
@@ -31,7 +50,7 @@
 		});
 		moon = new THREE.Mesh(geometry, material);
 
-		const light = new THREE.DirectionalLight(0xffffff, 1.4);
+		const light = new THREE.DirectionalLight(0xffffff, lightIntensity);
 		light.position.set(0, 0, 1);
 		scene.add(light);
 
@@ -86,4 +105,9 @@
 
 <div class="absolute top-2 left-2 bg-base-200 rounded-full p-3">
 	hello world
+</div>
+
+<div class="absolute bottom-2 right-2 text-white rounded-full p-3">
+	{MONTHS[currentTime.getMonth()]}
+	{currentTime.getDate()}, {currentTime.getFullYear()}
 </div>
