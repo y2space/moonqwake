@@ -22,32 +22,37 @@
 		document.body.appendChild(renderer.domElement);
 
 		const texture = new THREE.TextureLoader().load('/moontexture.jpg');
-        const normalMap = new THREE.TextureLoader().load('moonnormal.jpg');
+		const normalMap = new THREE.TextureLoader().load('moonnormal.jpg');
 
 		const geometry = new THREE.SphereGeometry();
-		const material = new THREE.MeshStandardMaterial({ map: texture, normalMap: normalMap});
+		const material = new THREE.MeshStandardMaterial({
+			map: texture,
+			normalMap: normalMap,
+		});
 		moon = new THREE.Mesh(geometry, material);
 
-        const light = new THREE.DirectionalLight(0xffffff, 1.4);
-        light.position.set(0, 0, 1);
-        scene.add(light);
-
+		const light = new THREE.DirectionalLight(0xffffff, 1.4);
+		light.position.set(0, 0, 1);
+		scene.add(light);
 
 		scene.add(moon);
 
-		camera.position.z = 5;
+		camera.position.z = 2;
 
 		function animate() {
 			requestAnimationFrame(animate);
 			renderer.render(scene, camera);
 
-			moon.rotation.y += 0.001;
-			moon.rotation.x += 0.0005;
+			if (!usedManual) {
+				moon.rotation.y += 0.001;
+				moon.rotation.x += 0.0005;
+			}
 		}
 
 		animate();
 	});
 
+	let usedManual = false;
 	let dragStart = { x: 0, y: 0 };
 
 	function onMouseMove(event: MouseEvent) {
@@ -67,6 +72,10 @@
 				deltaRotationQuaternion,
 				moon.quaternion
 			);
+
+			usedManual = true;
+		} else {
+			usedManual = false;
 		}
 
 		dragStart = { x: event.clientX, y: event.clientY };
