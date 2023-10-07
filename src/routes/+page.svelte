@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Controls from "$lib/components/Controls.svelte";
-	import { MONTHS } from "$lib/constants";
-	import { createScene } from "$lib/render";
+	import Controls from '$lib/components/Controls.svelte';
+	import { MONTHS } from '$lib/constants';
+	import { createScene } from '$lib/render';
 
-	import { onMount } from "svelte";
-	import * as THREE from "three";
+	import { onMount } from 'svelte';
+	import * as THREE from 'three';
 
 	let renderCanvas: HTMLCanvasElement;
 	let moon: THREE.Mesh;
@@ -86,7 +86,7 @@
 						((event.clientY - dragStart.y) * Math.PI) / 180,
 						((event.clientX - dragStart.x) * Math.PI) / 180,
 						0,
-						"XYZ"
+						'XYZ'
 					)
 				)
 				.normalize();
