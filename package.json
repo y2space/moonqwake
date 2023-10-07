@@ -11,7 +11,6 @@
 		"lint": "eslint ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.5.0",
 		"@types/three": "^0.156.0",
 		"@typescript-eslint/eslint-plugin": "^5.45.0",
@@ -26,6 +25,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"three": "^0.157.0"
+		"three": "^0.157.0",
+		"@sveltejs/adapter-cloudflare": "^2.3.3"
 	}
 }
