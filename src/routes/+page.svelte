@@ -14,8 +14,19 @@
 
 	let lightIntensity: number;
 	let currentTime = new Date();
+	let playTimeline = false;
+	let timelineValue = 0;
+	let lastPlayed: number;
 
 	$: if (light) light.intensity = lightIntensity / 20;
+	$: {
+		if (playTimeline) lastPlayed = setInterval(increaseTimeline, 1000);
+		else clearInterval(lastPlayed);
+	}
+
+	function increaseTimeline() {
+		return (timelineValue += 1);
+	}
 
 	onMount(() => {
 		const scene = new THREE.Scene();
@@ -37,7 +48,10 @@
 
 		moon = models.moon;
 		light = models.light;
+<<<<<<< HEAD
 		skybox = models.skybox;
+=======
+>>>>>>> fc2da1b80fe628388cc44b86ed6f986221bdcb9a
 		camera.position.z = 3;
 
 		function animate() {
@@ -48,6 +62,9 @@
 				moon.rotation.y += 0.001;
 				moon.rotation.x += 0.0005;
 			}
+
+			models.skybox.rotation.y += 0.001;
+			models.skybox.rotation.x += 0.0005;
 		}
 
 		animate();
@@ -55,7 +72,11 @@
 
 	let usedManual = false;
 	let dragStart = { x: 0, y: 0 };
+<<<<<<< HEAD
 	let dragEnd = { x: 0, y: 0 };
+=======
+	let skyboxOffset = { x: 0, y: 0 };
+>>>>>>> fc2da1b80fe628388cc44b86ed6f986221bdcb9a
 
 	function onMouseScroll(event: WheelEvent) {
 		event.preventDefault();
@@ -68,6 +89,21 @@
 	}
 
 	function onMouseMove(event: MouseEvent) {
+<<<<<<< HEAD
+=======
+		function clamp(x: number, a: number, b: number) {
+			return Math.min(Math.max(x, b), a);
+		}
+
+		const parralaxAmount = 10000;
+		const maxAmount = 0.1;
+		const deltaY = (window.innerHeight / 2 - event.clientY) / parralaxAmount;
+		const deltaX = (window.innerWidth / 2 - event.clientX) / parralaxAmount;
+
+		skybox.rotation.y = -clamp(skyboxOffset.x + deltaX, maxAmount, -maxAmount);
+		skybox.rotation.x = -clamp(skyboxOffset.y + deltaY, maxAmount, -maxAmount);
+
+>>>>>>> fc2da1b80fe628388cc44b86ed6f986221bdcb9a
 		if (event.buttons === 1) {
 			const deltaRotationQuaternion = new THREE.Quaternion()
 				.setFromEuler(
@@ -124,4 +160,22 @@
 <div class="absolute bottom-2 right-2 text-white rounded-full p-3">
 	{MONTHS[currentTime.getMonth()]}
 	{currentTime.getDate()}, {currentTime.getFullYear()}
+</div>
+
+<div
+	class="absolute text-white rounded-full p-3 left-0 right-0 bottom-24 grid w-full"
+>
+	<input
+		type="range"
+		min="0"
+		max="100"
+		bind:value={timelineValue}
+		class="range w-full mx-auto"
+	/>
+
+	<input
+		type="checkbox"
+		class="toggle toggle-success"
+		bind:checked={playTimeline}
+	/>
 </div>
