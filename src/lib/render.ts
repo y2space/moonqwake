@@ -74,8 +74,10 @@ export async function createScene(scene: THREE.Scene) {
 
 	const landerLoader = new GLTFLoader();
 	const landerModel = await new Promise<THREE.Group>(r => landerLoader.load('/models/lunar_lander/scene.gltf', gltf => r(gltf.scene)));
+	const exclamationPointModel = await new Promise<THREE.Group>(r => landerLoader.load('/models/exclamation_point/scene.gltf', gltf => r(gltf.scene)));
 
 	landerModel.scale.set(0.03, 0.03, 0.03);
+	exclamationPointModel.scale.set(0.03, 0.03, 0.03);
 
 	const landerMeshes = landers.map(lander => {
 		const pos = positionToCoordinates(lander.lat, lander.long, 1.2, 0);
@@ -105,6 +107,7 @@ export async function createScene(scene: THREE.Scene) {
 		dots,
 		landerMeshes,
 		moonlines,
+		exclamationPointModel,
 	};
 }
 
