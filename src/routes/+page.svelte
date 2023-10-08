@@ -282,6 +282,7 @@
 				lightParent.rotation.y += 0.05;
 				lightParent.rotation.x += 0.008;
 			}
+
 			for (const { mesh } of models.dots) {
 				let position = new THREE.Vector3();
 				position.setFromMatrixPosition(mesh.matrixWorld);
@@ -336,10 +337,13 @@
 				deltaRotationQuaternion,
 				skybox.quaternion
 			);
-			lightParent.quaternion.multiplyQuaternions(
-				deltaRotationQuaternion,
-				lightParent.quaternion
-			);
+
+			if (!playTimeline) {
+				lightParent.quaternion.multiplyQuaternions(
+					deltaRotationQuaternion,
+					lightParent.quaternion
+				);
+			}
 
 			dragEnd = { x: skybox.rotation.x, y: skybox.rotation.y };
 
