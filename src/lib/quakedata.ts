@@ -58,3 +58,7 @@ export default [
 	{ type: 'A51', long: 14.42, lat: 8.63, date: 132845700000 },
 	{ type: 'A97', long: 16.39, lat: -2.36, date: 235562880000 },
 ] as const;
+
+function quakesCloseTo(date: number) {
+	
+}
