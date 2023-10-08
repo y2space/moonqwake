@@ -8,6 +8,9 @@ dependencies:
   '@sveltejs/adapter-cloudflare':
     specifier: ^2.3.3
     version: 2.3.3(@sveltejs/kit@1.5.0)
+  '@tweenjs/tween.js':
+    specifier: ^21.0.0
+    version: 21.0.0
   autoprefixer:
     specifier: ^10.4.16
     version: 10.4.16(postcss@8.4.31)
@@ -608,6 +611,10 @@ packages:
       vitefu: 0.2.4(vite@4.0.0)
     transitivePeerDependencies:
       - supports-color
+
+  /@tweenjs/tween.js@21.0.0:
+    resolution: {integrity: sha512-qVfOiFh0U8ZSkLgA6tf7kj2MciqRbSCWaJZRwftVO7UbtVDNsZAXpWXqvCDtIefvjC83UJB+vHTDOGm5ibXjEA==}
+    dev: false
 
   /@types/cookie@0.5.2:
     resolution: {integrity: sha512-DBpRoJGKJZn7RY92dPrgoMew8xCWc2P71beqsjyhEI/Ds9mOyVmBwtekyfhpwFIVt1WrxTonFifiOZ62V8CnNA==}
