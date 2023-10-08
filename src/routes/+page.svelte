@@ -29,7 +29,7 @@
 	let showLanders = true;
 	let enableTable = false;
 	let openWelcomeModal = true;
-
+	let cameraStartPosition: THREE.Vector3;
 	let firstPerson = false;
 	let currentTime = new Date();
 	let playTimeline = false;
@@ -100,12 +100,12 @@
 		magnitude: number,
 		index: number
 	) {
-		const cameraStartPosition = camera.position.clone();
+		//problem
 		const earthquakeSound = new THREE.Audio(listener);
 
 		soundMap.set(index, earthquakeSound);
 		const audioLoader = new THREE.AudioLoader();
-		audioLoader.load('/sounds/rumble.mp3', buffer => {
+		audioLoader.load('/sounds/rumble.mp3', (buffer) => {
 			earthquakeSound.setBuffer(buffer);
 			earthquakeSound.setLoop(false);
 			earthquakeSound.setVolume(1);
@@ -224,7 +224,7 @@
 	}
 
 	onMount(async () => {
-		document.addEventListener('contextmenu', e => {
+		document.addEventListener('contextmenu', (e) => {
 			e.preventDefault();
 		});
 
@@ -391,6 +391,8 @@
 
 						camera.lookAt(plane.coplanarPoint(target));
 						camera.rotateX(45);
+
+						cameraStartPosition = camera.position.clone();
 						firstPerson = true;
 					}
 				}
