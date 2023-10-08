@@ -397,9 +397,15 @@
 			}
 		}
 	}
+
+	function onKeyPress(event: KeyboardEvent) {
+		if (event.code === 'Space') {
+			playTimeline = !playTimeline;
+		}
+	}
 </script>
 
-<svelte:window bind:innerWidth bind:innerHeight />
+<svelte:window bind:innerWidth bind:innerHeight on:keypress={onKeyPress} />
 
 <canvas
 	bind:this={renderCanvas}
