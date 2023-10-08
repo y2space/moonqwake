@@ -1,11 +1,11 @@
 <script lang="ts">
-	import Controls from "$lib/components/Controls.svelte";
-	import DataTable from "$lib/components/DataTable.svelte";
-	import { MONTHS } from "$lib/constants";
-	import quakes, { quakesCloseTo, landers } from "$lib/quakedata";
-	import { createScene } from "$lib/render";
-	import { onMount } from "svelte";
-	import * as THREE from "three";
+	import Controls from '$lib/components/Controls.svelte';
+	import DataTable from '$lib/components/DataTable.svelte';
+	import { MONTHS } from '$lib/constants';
+	import quakes, { quakesCloseTo, landers } from '$lib/quakedata';
+	import { createScene } from '$lib/render';
+	import { onMount } from 'svelte';
+	import * as THREE from 'three';
 
 	let renderCanvas: HTMLCanvasElement;
 	let moon: THREE.Mesh;
@@ -23,7 +23,7 @@
 	let exclamationPointModel: THREE.Group;
 
 	let lightIntensity: number;
-	let selectDate: number;
+	let selectDate = 0;
 	let showAxes = false;
 	let useNormalMap = true;
 	let uselonglat = false;
@@ -95,8 +95,8 @@
 		}
 	}
 
-	$: {
-		timelineValue = selectDate / stepSize;
+	$: if (selectDate) {
+		timelineValue = (selectDate - startTime.getTime()) / stepSize;
 	}
 
 	function playEarthquake(
@@ -110,7 +110,7 @@
 
 		soundMap.set(index, earthquakeSound);
 		const audioLoader = new THREE.AudioLoader();
-		audioLoader.load("/sounds/rumble.mp3", (buffer) => {
+		audioLoader.load('/sounds/rumble.mp3', buffer => {
 			earthquakeSound.setBuffer(buffer);
 			earthquakeSound.setLoop(false);
 			earthquakeSound.setVolume(1);
@@ -229,7 +229,7 @@
 	}
 
 	onMount(async () => {
-		document.addEventListener("contextmenu", (e) => {
+		document.addEventListener('contextmenu', e => {
 			e.preventDefault();
 		});
 
@@ -322,7 +322,7 @@
 						((event.clientY - dragStart.y) * Math.PI) / 180,
 						((event.clientX - dragStart.x) * Math.PI) / 180,
 						0,
-						"XYZ"
+						'XYZ'
 					)
 				)
 				.normalize();
@@ -378,7 +378,7 @@
 
 				for (let i = 0; i < intersects.length; i++) {
 					if (intersects[i].object.uuid === moon.uuid) {
-						console.log("Hit moon!");
+						console.log('Hit moon!');
 						console.log(intersects[i]);
 						const moonIntersection = intersects[i];
 
@@ -411,7 +411,7 @@
 	}
 
 	function onKeyPress(event: KeyboardEvent) {
-		if (event.code === "Space") {
+		if (event.code === 'Space') {
 			playTimeline = !playTimeline;
 
 			if (!playTimeline) {
