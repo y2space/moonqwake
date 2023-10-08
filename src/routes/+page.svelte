@@ -66,24 +66,26 @@
 		camera.aspect = innerWidth / innerHeight;
 		camera.updateProjectionMatrix();
 	}
-	$: if (playTimeline) {
+	$: {
 		const unix = startTime.getTime() + timelineValue * stepSize;
 		currentTime = new Date(unix);
 
-		const quakes = quakesCloseTo(unix, stepSize);
+		if (playTimeline) {
+			const quakes = quakesCloseTo(unix, stepSize);
 
-		for (const { index } of quakes) {
-			const { mesh, dot } = quakeModels[index];
+			for (const { index } of quakes) {
+				const { mesh, dot } = quakeModels[index];
 
-			if (mesh) {
-				mesh.visible = true;
+				if (mesh) {
+					mesh.visible = true;
 
-				// spawn an earthquake on the mesh position and animate it
-				playEarthquake(mesh, dot, 0.2);
-			}
+					// spawn an earthquake on the mesh position and animate it
+					playEarthquake(mesh, dot, 0.2);
+				}
 
-			if (dot) {
-				dot.visible = true;
+				if (dot) {
+					dot.visible = true;
+				}
 			}
 		}
 	}
