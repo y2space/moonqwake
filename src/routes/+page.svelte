@@ -302,7 +302,7 @@
 
 		if (!firstPerson) {
 			const zoom = Math.min(
-				8,
+				28,
 				Math.max(1.5, camera.position.z + (Math.sign(event.deltaY) * 70) / 1000)
 			);
 			camera.position.z = zoom;
@@ -419,14 +419,12 @@
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight on:keypress={onKeyPress} />
-<!-- Open the modal using ID.showModal() method -->
-<!-- The button to open modal -->
+
 <button
-	class="btn absolute bottom-0 left-2"
+	class="btn absolute bottom-2 left-2 z-50"
 	on:click={() => (openWelcomeModal = true)}>Instructions</button
 >
 
-<!-- Put this part before </body> tag -->
 <input type="checkbox" id="my_modal_7" class="modal-toggle" />
 <div class="modal" class:modal-open={openWelcomeModal}>
 	<div class="modal-box">
