@@ -1,5 +1,11 @@
-<script>
+<script lang="ts">
 	import quakes from "$lib/quakedata";
+
+	function getDate(d: number) {
+		let t = new Date(d);
+		let d2: string = t.toISOString();
+		return d2.slice(0, 9);
+	}
 </script>
 
 <div class="overflow-x-auto">
@@ -15,7 +21,7 @@
 			{#each quakes as quake, index}
 				<tr>
 					<th>{index + 1}</th>
-					<th>{quake.date}</th>
+					<th>{getDate(quake.date)}</th>
 					<td>{quake.type}</td>
 				</tr>
 			{/each}
