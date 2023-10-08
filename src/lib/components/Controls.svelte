@@ -8,7 +8,7 @@
 	<details class="dropdown">
 		<summary class="btn">Controls</summary>
 		<ul
-			class="p-5 text-sm shadow dropdown-content z-[1] bg-base-100 rounded-box w-80 grid grid-cols-4 gap-4"
+			class="my-2 p-5 text-sm shadow dropdown-content z-[1] bg-base-100 rounded-box w-80 grid grid-cols-4 gap-4"
 		>
 			<div class="col-span-3">
 				World Axes
