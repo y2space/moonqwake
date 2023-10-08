@@ -22,12 +22,16 @@ export async function createScene(scene: THREE.Scene) {
 		'/lroc_color_poles_4k.jpg'
 	);
 
+	const lightParentGeometry = new THREE.SphereGeometry(10);
+	const lightParent = new THREE.Mesh(lightParentGeometry);
+	scene.add(lightParent);
+
 	const moonNormalMap = new THREE.TextureLoader().load('/ldem_16_uint.jpg');
 	const moonGeometry = new THREE.SphereGeometry(1, 30, 30);
 	const moonMaterial = new THREE.MeshStandardMaterial({
 		map: moonTexture,
 		normalMap: moonNormalMap,
-		normalScale: new THREE.Vector2(4, 4),
+		normalScale: new THREE.Vector2(8, 8),
 	});
 	moonMaterial.metalness = 0.1;
 	moonMaterial.roughness = 0.5;
@@ -36,15 +40,17 @@ export async function createScene(scene: THREE.Scene) {
 
 	const light = new THREE.DirectionalLight(0xffffff, 1.4);
 	light.position.set(0, 0, 1);
-	scene.add(light);
+	lightParent.add(light);
 
 	const axesHelper = new THREE.AxesHelper(5000);
 	moon.add(axesHelper);
 
 	const moonedges = new THREE.EdgesGeometry(moonGeometry, 0.01);
-	const moonlines = new THREE.LineSegments(moonedges, new THREE.LineBasicMaterial({color: 0xffffff, linewidth: 5}));
+	const moonlines = new THREE.LineSegments(
+		moonedges,
+		new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 5 })
+	);
 	moon.add(moonlines);
-
 
 	const dots = quakes.map((quake: Quake) => {
 		const dotGeometry = new THREE.BufferGeometry();
@@ -73,11 +79,15 @@ export async function createScene(scene: THREE.Scene) {
 	});
 
 	const landerLoader = new GLTFLoader();
-	const landerModel = await new Promise<THREE.Group>(r => landerLoader.load('/models/lunar_lander/scene.gltf', gltf => r(gltf.scene)));
+	const landerModel = await new Promise<THREE.Group>((r) =>
+		landerLoader.load('/models/lunar_lander/scene.gltf', (gltf) =>
+			r(gltf.scene)
+		)
+	);
 
 	landerModel.scale.set(0.03, 0.03, 0.03);
 
-	const landerMeshes = landers.map(lander => {
+	const landerMeshes = landers.map((lander) => {
 		const pos = positionToCoordinates(lander.lat, lander.long, 1.2, 0);
 		const surfacePos = positionToCoordinates(lander.lat, lander.long, 1, 0);
 
@@ -105,6 +115,7 @@ export async function createScene(scene: THREE.Scene) {
 		dots,
 		landerMeshes,
 		moonlines,
+		lightParent,
 	};
 }
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import quakes from "$lib/quakedata";
+	import quakes from '$lib/quakedata';
 
 	function getDate(d: number) {
 		let t = new Date(d);

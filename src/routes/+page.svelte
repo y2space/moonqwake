@@ -18,6 +18,7 @@
 	let quakeModels: { mesh: THREE.Mesh; dot: THREE.Points }[] = [];
 	let moonlines: THREE.LineSegments;
 	let landerModels: { mesh: THREE.Mesh; landerMesh: THREE.Group }[] = [];
+	let lightParent: THREE.Mesh;
 	let scene: THREE.Scene;
 
 	let lightIntensity: number;
@@ -209,6 +210,7 @@
 		moonNormalMap = models.moonNormalMap;
 		quakeModels = models.dots;
 		moonlines = models.moonlines;
+		lightParent = models.lightParent;
 		camera.position.z = 3;
 		landerModels = models.landerMeshes;
 
@@ -222,6 +224,11 @@
 			if (!usedManual && !firstPerson) {
 				moon.rotation.y += 0.001;
 				moon.rotation.x += 0.0005;
+			}
+
+			if (playTimeline) {
+				lightParent.rotation.y += 0.05;
+				lightParent.rotation.x += 0.008;
 			}
 			for (const { mesh } of models.dots) {
 				let position = new THREE.Vector3();
@@ -276,6 +283,10 @@
 			skybox.quaternion.multiplyQuaternions(
 				deltaRotationQuaternion,
 				skybox.quaternion
+			);
+			lightParent.quaternion.multiplyQuaternions(
+				deltaRotationQuaternion,
+				lightParent.quaternion
 			);
 
 			dragEnd = { x: skybox.rotation.x, y: skybox.rotation.y };
