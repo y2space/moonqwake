@@ -99,7 +99,7 @@
 		const earthquakeSound = new THREE.Audio(listener);
 
 		const audioLoader = new THREE.AudioLoader();
-		audioLoader.load('/sounds/rumble.mp3', (buffer) => {
+		audioLoader.load('/sounds/rumble.mp3', buffer => {
 			earthquakeSound.setBuffer(buffer);
 			earthquakeSound.setLoop(false);
 			earthquakeSound.setVolume(1);
@@ -113,7 +113,7 @@
 
 		const sphere = new THREE.Mesh(
 			new THREE.SphereGeometry(magnitude, 32, 32),
-			new THREE.MeshBasicMaterial({ color: 0x000000 })
+			new THREE.MeshBasicMaterial({ color: 0xff0000 })
 		);
 		dot.add(sphere);
 		dot.add(exclamationPoint);
@@ -210,7 +210,7 @@
 	}
 
 	onMount(async () => {
-		document.addEventListener('contextmenu', (e) => {
+		document.addEventListener('contextmenu', e => {
 			e.preventDefault();
 		});
 
