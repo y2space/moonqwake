@@ -28,6 +28,9 @@ devDependencies:
   '@sveltejs/kit':
     specifier: ^1.5.0
     version: 1.5.0(svelte@3.54.0)(vite@4.0.0)
+  '@types/node':
+    specifier: ^20.8.3
+    version: 20.8.3
   '@types/three':
     specifier: ^0.156.0
     version: 0.156.0
@@ -57,7 +60,7 @@ devDependencies:
     version: 4.9.3
   vite:
     specifier: ^4.0.0
-    version: 4.0.0
+    version: 4.0.0(@types/node@20.8.3)
 
 packages:
 
@@ -568,7 +571,7 @@ packages:
       svelte: 3.54.0
       tiny-glob: 0.2.9
       undici: 5.18.0
-      vite: 4.0.0
+      vite: 4.0.0(@types/node@20.8.3)
     transitivePeerDependencies:
       - supports-color
 
@@ -583,7 +586,7 @@ packages:
       '@sveltejs/vite-plugin-svelte': 2.4.6(svelte@3.54.0)(vite@4.0.0)
       debug: 4.3.4
       svelte: 3.54.0
-      vite: 4.0.0
+      vite: 4.0.0(@types/node@20.8.3)
     transitivePeerDependencies:
       - supports-color
 
@@ -601,7 +604,7 @@ packages:
       magic-string: 0.30.4
       svelte: 3.54.0
       svelte-hmr: 0.15.3(svelte@3.54.0)
-      vite: 4.0.0
+      vite: 4.0.0(@types/node@20.8.3)
       vitefu: 0.2.4(vite@4.0.0)
     transitivePeerDependencies:
       - supports-color
@@ -612,6 +615,9 @@ packages:
   /@types/json-schema@7.0.13:
     resolution: {integrity: sha512-RbSSoHliUbnXj3ny0CNFOoxrIDV6SUGyStHsvDqosw6CkdPV8TtWGlfecuK4ToyMEAql6pzNxgCFKanovUzlgQ==}
     dev: true
+
+  /@types/node@20.8.3:
+    resolution: {integrity: sha512-jxiZQFpb+NlH5kjW49vXxvxTjeeqlbsnTAdBTKpzEdPs9itay7MscYXz3Fo9VYFEsfQ6LJFitHad3faerLAjCw==}
 
   /@types/pug@2.0.7:
     resolution: {integrity: sha512-I469DU0UXNC1aHepwirWhu9YKg5fkxohZD95Ey/5A7lovC+Siu+MCLffva87lnfThaOrw9Vb1DUN5t55oULAAw==}
@@ -2207,7 +2213,7 @@ packages:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: false
 
-  /vite@4.0.0:
+  /vite@4.0.0(@types/node@20.8.3):
     resolution: {integrity: sha512-ynad+4kYs8Jcnn8J7SacS9vAbk7eMy0xWg6E7bAhS1s79TK+D7tVFGXVZ55S7RNLRROU1rxoKlvZ/qjaB41DGA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -2232,6 +2238,7 @@ packages:
       terser:
         optional: true
     dependencies:
+      '@types/node': 20.8.3
       esbuild: 0.16.17
       postcss: 8.4.31
       resolve: 1.22.6
@@ -2247,7 +2254,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.0.0
+      vite: 4.0.0(@types/node@20.8.3)
 
   /which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
