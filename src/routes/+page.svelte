@@ -66,7 +66,7 @@
 		camera.aspect = innerWidth / innerHeight;
 		camera.updateProjectionMatrix();
 	}
-	$: {
+	$: if (playTimeline) {
 		const unix = startTime.getTime() + timelineValue * stepSize;
 		currentTime = new Date(unix);
 
