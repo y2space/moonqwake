@@ -3,6 +3,7 @@
 	export let showAxes = false;
 	export let useNormalMap = true;
 	export let uselonglat = false;
+	export let showLanders = true;
 </script>
 
 <div class="absolute top-2 left-2">
@@ -26,7 +27,11 @@
 				bind:checked={showAxes}
 			/>
 			<div class="col-span-3">Longitude & Latitude</div>
-			<input type="checkbox" class="toggle toggle-success" bind:checked={uselonglat} />
+			<input
+				type="checkbox"
+				class="toggle toggle-success"
+				bind:checked={uselonglat}
+			/>
 			<div class="col-span-3">Height Map</div>
 			<input
 				type="checkbox"
@@ -34,7 +39,11 @@
 				bind:checked={useNormalMap}
 			/>
 			<div class="col-span-3">Apollo Landers</div>
-			<input type="checkbox" class="toggle toggle-info" checked />
+			<input
+				type="checkbox"
+				class="toggle toggle-info"
+				bind:checked={showLanders}
+			/>
 			<div class="col-span-4">
 				Light Intensity <br />
 				<input

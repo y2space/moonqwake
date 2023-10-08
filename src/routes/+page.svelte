@@ -1,11 +1,11 @@
 <script lang="ts">
-	import Controls from "$lib/components/Controls.svelte";
-	import DataTable from "$lib/components/DataTable.svelte";
-	import { MONTHS } from "$lib/constants";
-	import quakes, { quakesCloseTo, landers } from "$lib/quakedata";
-	import { createScene } from "$lib/render";
-	import { onMount } from "svelte";
-	import * as THREE from "three";
+	import Controls from '$lib/components/Controls.svelte';
+	import DataTable from '$lib/components/DataTable.svelte';
+	import { MONTHS } from '$lib/constants';
+	import quakes, { quakesCloseTo, landers } from '$lib/quakedata';
+	import { createScene } from '$lib/render';
+	import { onMount } from 'svelte';
+	import * as THREE from 'three';
 
 	let renderCanvas: HTMLCanvasElement;
 	let moon: THREE.Mesh;
@@ -17,11 +17,13 @@
 	let moonNormalMap: THREE.Texture;
 	let quakeModels: { mesh: THREE.Mesh; dot: THREE.Points }[] = [];
 	let moonlines: THREE.LineSegments;
+	let landerModels: { mesh: THREE.Mesh; landerMesh: THREE.Group }[] = [];
 
 	let lightIntensity: number;
 	let showAxes = false;
 	let useNormalMap = true;
 	let uselonglat = false;
+	let showLanders = true;
 
 	let currentTime = new Date();
 	let playTimeline = false;
@@ -38,6 +40,17 @@
 
 	$: stepSize = (endTime.getTime() - startTime.getTime()) / TIME_STEPS;
 
+	$: if (landerModels) {
+		for (const { landerMesh, mesh } of landerModels) {
+			if (showLanders) {
+				moon.add(landerMesh);
+				moon.add(mesh);
+			} else {
+				moon.remove(landerMesh);
+				moon.remove(mesh);
+			}
+		}
+	}
 	$: if (light) light.intensity = lightIntensity / 20;
 	$: {
 		if (playTimeline) updateTimeline();
@@ -144,8 +157,7 @@
 	$: if (moon && moonlines) {
 		if (uselonglat) {
 			moon.add(moonlines);
-		}
-		else{
+		} else {
 			moon.remove(moonlines);
 		}
 	}
@@ -191,6 +203,7 @@
 		quakeModels = models.dots;
 		moonlines = models.moonlines;
 		camera.position.z = 3;
+		landerModels = models.landerMeshes;
 
 		startTime = new Date(quakes[0].date);
 		endTime = new Date(quakes.at(-1).date);
@@ -242,7 +255,7 @@
 						((event.clientY - dragStart.y) * Math.PI) / 180,
 						((event.clientX - dragStart.x) * Math.PI) / 180,
 						0,
-						"XYZ"
+						'XYZ'
 					)
 				)
 				.normalize();
@@ -284,7 +297,13 @@
 
 <canvas bind:this={renderCanvas} on:mousemove={onMouseMove} />
 
-<Controls bind:lightIntensity bind:showAxes bind:useNormalMap bind:uselonglat/>
+<Controls
+	bind:lightIntensity
+	bind:showAxes
+	bind:useNormalMap
+	bind:uselonglat
+	bind:showLanders
+/>
 
 <div class="absolute top-2 right-2 text-white rounded-full p-3">
 	{MONTHS[currentTime.getMonth()]}
