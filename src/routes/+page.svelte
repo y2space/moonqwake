@@ -52,7 +52,6 @@
 		else moon.remove(axesHelper);
 	}
 	$: {
-		console.log({ moon, moonNormalMap });
 		if (moon && moonNormalMap) {
 			const material = moon.material as THREE.MeshStandardMaterial;
 
