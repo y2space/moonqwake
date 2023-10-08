@@ -44,6 +44,8 @@
 
 	const TIME_STEPS = 25_000;
 
+	const soundMap = new Map<number, THREE.Audio>();
+
 	$: stepSize = (endTime.getTime() - startTime.getTime()) / TIME_STEPS;
 
 	$: if (landerModels) {
@@ -81,7 +83,7 @@
 					mesh.visible = true;
 
 					// spawn an earthquake on the mesh position and animate it
-					playEarthquake(mesh, dot, 0.2);
+					playEarthquake(mesh, dot, 0.2, index);
 				}
 
 				if (dot) {
@@ -94,13 +96,15 @@
 	function playEarthquake(
 		mesh: THREE.Mesh,
 		dot: THREE.Points,
-		magnitude: number
+		magnitude: number,
+		index: number
 	) {
 		const cameraStartPosition = camera.position.clone();
 		const earthquakeSound = new THREE.Audio(listener);
 
+		soundMap.set(index, earthquakeSound);
 		const audioLoader = new THREE.AudioLoader();
-		audioLoader.load('/sounds/rumble.mp3', buffer => {
+		audioLoader.load('/sounds/rumble.mp3', (buffer) => {
 			earthquakeSound.setBuffer(buffer);
 			earthquakeSound.setLoop(false);
 			earthquakeSound.setVolume(1);
@@ -219,7 +223,7 @@
 	}
 
 	onMount(async () => {
-		document.addEventListener('contextmenu', e => {
+		document.addEventListener('contextmenu', (e) => {
 			e.preventDefault();
 		});
 
@@ -401,6 +405,12 @@
 	function onKeyPress(event: KeyboardEvent) {
 		if (event.code === 'Space') {
 			playTimeline = !playTimeline;
+
+			if (!playTimeline) {
+				for (const sound of soundMap.values()) {
+					sound.stop();
+				}
+			}
 		}
 	}
 </script>
