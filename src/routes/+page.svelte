@@ -6,6 +6,7 @@
 	import { createScene } from '$lib/render';
 	import { onMount } from 'svelte';
 	import * as THREE from 'three';
+	import * as TWEEN from '@tweenjs/tween.js';
 
 	let renderCanvas: HTMLCanvasElement;
 	let moon: THREE.Mesh;
@@ -95,8 +96,8 @@
 		}
 	}
 
-	$: if (selectDate) {
-		timelineValue = (selectDate - startTime.getTime()) / stepSize;
+	$: {
+		timelineValue = selectDate / stepSize;
 	}
 
 	function playEarthquake(
@@ -110,7 +111,7 @@
 
 		soundMap.set(index, earthquakeSound);
 		const audioLoader = new THREE.AudioLoader();
-		audioLoader.load('/sounds/rumble.mp3', buffer => {
+		audioLoader.load('/sounds/rumble.mp3', (buffer) => {
 			earthquakeSound.setBuffer(buffer);
 			earthquakeSound.setLoop(false);
 			earthquakeSound.setVolume(1);
@@ -229,7 +230,7 @@
 	}
 
 	onMount(async () => {
-		document.addEventListener('contextmenu', e => {
+		document.addEventListener('contextmenu', (e) => {
 			e.preventDefault();
 		});
 
@@ -272,6 +273,7 @@
 		function animate() {
 			requestAnimationFrame(animate);
 			renderer.render(scene, camera);
+			TWEEN.update();
 
 			if (!usedManual && !firstPerson) {
 				moon.rotation.y += 0.001;
@@ -282,7 +284,6 @@
 				lightParent.rotation.y += 0.05;
 				lightParent.rotation.x += 0.008;
 			}
-
 			for (const { mesh } of models.dots) {
 				let position = new THREE.Vector3();
 				position.setFromMatrixPosition(mesh.matrixWorld);
@@ -337,13 +338,10 @@
 				deltaRotationQuaternion,
 				skybox.quaternion
 			);
-
-			if (!playTimeline) {
-				lightParent.quaternion.multiplyQuaternions(
-					deltaRotationQuaternion,
-					lightParent.quaternion
-				);
-			}
+			lightParent.quaternion.multiplyQuaternions(
+				deltaRotationQuaternion,
+				lightParent.quaternion
+			);
 
 			dragEnd = { x: skybox.rotation.x, y: skybox.rotation.y };
 
@@ -392,17 +390,43 @@
 							moonIntersection.point.z
 						);
 
-						const posScaled = pos.multiplyScalar(1.15);
-						camera.position.set(posScaled.x, posScaled.y, posScaled.z);
+						const posScaled = pos.multiplyScalar(1.1);
+						const camposition = { x: 0, y: 0, z: 3 };
+						const cameraCloned = camera.clone();
 
-						const plane = new THREE.Plane(pos);
+						const plane = new THREE.Plane(posScaled);
 						const target = new THREE.Vector3();
 
-						camera.lookAt(plane.coplanarPoint(target));
-						camera.rotateX(45);
+						cameraCloned.position.set(posScaled.x, posScaled.y, posScaled.z);
+						cameraCloned.lookAt(plane.coplanarPoint(target));
+						cameraCloned.rotateX(Math.PI / 2);
+						console.log(camera.rotation, cameraCloned.rotation);
 
-						cameraStartPosition = camera.position.clone();
-						firstPerson = true;
+						const zoomin = new TWEEN.Tween(camposition)
+							.to({ x: posScaled.x, y: posScaled.y, z: posScaled.z })
+							.onUpdate(() => {
+								camera.position.set(
+									camposition.x,
+									camposition.y,
+									camposition.z
+								);
+							})
+							.start();
+						const camerastartrotation = camera.rotation.clone();
+						const rotatezoom = new TWEEN.Tween(camerastartrotation)
+							.to(cameraCloned.rotation)
+							.onUpdate(() => {
+								camera.rotation.set(
+									camerastartrotation.x,
+									camerastartrotation.y,
+									camerastartrotation.z
+								);
+							})
+							.start();
+						zoomin.onComplete(() => {
+							firstPerson = true;
+							cameraStartPosition = camera.position.clone();
+						});
 					}
 				}
 			} else {
