@@ -46,13 +46,13 @@ export async function createScene(scene: THREE.Scene) {
 	const light = new THREE.DirectionalLight(0xffffff, 1.4);
 	
 	
-	const sunGeometry = new THREE.SphereGeometry(0.3, 10, 10);
+	const sunGeometry = new THREE.SphereGeometry(0.4, 10, 10);
 	const sunMaterial = new THREE.MeshBasicMaterial({
 		map: sunTexture,
 	})
 	const sunMesh = new THREE.Mesh(sunGeometry, sunMaterial);
 	light.add(sunMesh);
-	light.position.set(0, 0, 1);
+	light.position.set(0, 0, 30);
 	lightParent.add(light);
 
 	const axesHelper = new THREE.AxesHelper(5000);
