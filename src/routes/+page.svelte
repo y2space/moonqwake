@@ -96,6 +96,7 @@
 		dot: THREE.Points,
 		magnitude: number
 	) {
+		const cameraStartPosition = camera.position.clone();
 		const earthquakeSound = new THREE.Audio(listener);
 
 		const audioLoader = new THREE.AudioLoader();
@@ -150,6 +151,14 @@
 				startPosition.y + y,
 				startPosition.z + z
 			);
+
+			if (firstPerson) {
+				camera.position.set(
+					cameraStartPosition.x + x / 2,
+					cameraStartPosition.y + y / 2,
+					cameraStartPosition.z + z / 2
+				);
+			}
 		}, 10);
 
 		setTimeout(() => {
