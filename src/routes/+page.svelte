@@ -112,9 +112,10 @@
 				moon.rotation.y += 0.001;
 				moon.rotation.x += 0.0005;
 			}
-
 			for (const { mesh, dot } of models.dots) {
-				mesh.lookAt(camera.position);
+				let position = new THREE.Vector3();
+				position.setFromMatrixPosition(mesh.matrixWorld)
+				mesh.lookAt(position.x,position.y, 3);
 			}
 		}
 
