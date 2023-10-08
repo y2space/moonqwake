@@ -23,7 +23,7 @@ export async function createScene(scene: THREE.Scene) {
 	);
 
 	const moonNormalMap = new THREE.TextureLoader().load('/ldem_16_uint.jpg');
-	const moonGeometry = new THREE.SphereGeometry(1, 30, 30);
+	const moonGeometry = new THREE.SphereGeometry(1, 60, 60);
 	const moonMaterial = new THREE.MeshStandardMaterial({
 		map: moonTexture,
 		normalMap: moonNormalMap,
@@ -41,8 +41,10 @@ export async function createScene(scene: THREE.Scene) {
 	const axesHelper = new THREE.AxesHelper(5000);
 	moon.add(axesHelper);
 
-	const moonedges = new THREE.EdgesGeometry(moonGeometry, 0.01);
-	const moonlines = new THREE.LineSegments(moonedges, new THREE.LineBasicMaterial({color: 0xffffff, linewidth: 5}));
+
+	const mooninvis = new THREE.SphereGeometry(1.006, 30, 30)
+	const moonedges = new THREE.EdgesGeometry(mooninvis, 0.01);
+	const moonlines = new THREE.LineSegments(moonedges, new THREE.LineBasicMaterial({color: 0xffffff, linejoin: 'round'}));
 	moon.add(moonlines);
 
 
