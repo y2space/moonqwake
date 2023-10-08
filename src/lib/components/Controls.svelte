@@ -2,6 +2,9 @@
 	export let lightIntensity = 10;
 	export let showAxes = false;
 	export let useNormalMap = true;
+	export let uselonglat = false;
+	export let showLanders = true;
+	export let enableTable = false;
 </script>
 
 <div class="absolute top-2 left-2">
@@ -25,7 +28,11 @@
 				bind:checked={showAxes}
 			/>
 			<div class="col-span-3">Longitude & Latitude</div>
-			<input type="checkbox" class="toggle toggle-success" checked />
+			<input
+				type="checkbox"
+				class="toggle toggle-success"
+				bind:checked={uselonglat}
+			/>
 			<div class="col-span-3">Height Map</div>
 			<input
 				type="checkbox"
@@ -33,9 +40,17 @@
 				bind:checked={useNormalMap}
 			/>
 			<div class="col-span-3">Apollo Landers</div>
-			<input type="checkbox" class="toggle toggle-info" checked />
-			<div class="col-span-3">Seas & Oceans</div>
-			<input type="checkbox" class="toggle toggle-error" checked />
+			<input
+				type="checkbox"
+				class="toggle toggle-info"
+				bind:checked={showLanders}
+			/>
+			<div class="col-span-3">Earthquakes Table</div>
+			<input
+				type="checkbox"
+				class="toggle toggle-error"
+				bind:checked={enableTable}
+			/>
 			<div class="col-span-4">
 				Light Intensity <br />
 				<input

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Controls from '$lib/components/Controls.svelte';
+	import DataTable from '$lib/components/DataTable.svelte';
 	import { MONTHS } from '$lib/constants';
+	import quakes, { quakesCloseTo, landers } from '$lib/quakedata';
 	import { createScene } from '$lib/render';
 	import { onMount } from 'svelte';
 	import * as THREE from 'three';
@@ -13,17 +15,23 @@
 	let renderer: THREE.WebGL1Renderer;
 	let axesHelper: THREE.AxesHelper;
 	let moonNormalMap: THREE.Texture;
+	let quakeModels: { mesh: THREE.Mesh; dot: THREE.Points }[] = [];
+	let moonlines: THREE.LineSegments;
+	let landerModels: { mesh: THREE.Mesh; landerMesh: THREE.Group }[] = [];
 	let scene: THREE.Scene;
 
 	let lightIntensity: number;
 	let showAxes = false;
 	let useNormalMap = true;
+	let uselonglat = false;
+	let showLanders = true;
+	let enableTable = false;
 
 	let firstPerson = false;
 	let currentTime = new Date();
 	let playTimeline = false;
 	let timelineValue = 0;
-	let lastPlayed: number;
+	let lastPlayed: NodeJS.Timeout;
 
 	let innerWidth: number;
 	let innerHeight: number;
@@ -33,8 +41,19 @@
 
 	const TIME_STEPS = 25_000;
 
-	let stepSize = (endTime.getTime() - startTime.getTime()) / TIME_STEPS;
+	$: stepSize = (endTime.getTime() - startTime.getTime()) / TIME_STEPS;
 
+	$: if (landerModels) {
+		for (const { landerMesh, mesh } of landerModels) {
+			if (showLanders) {
+				moon.add(landerMesh);
+				moon.add(mesh);
+			} else {
+				moon.remove(landerMesh);
+				moon.remove(mesh);
+			}
+		}
+	}
 	$: if (light) light.intensity = lightIntensity / 20;
 	$: {
 		if (playTimeline) updateTimeline();
@@ -46,8 +65,81 @@
 		camera.updateProjectionMatrix();
 	}
 	$: {
-		currentTime = new Date(startTime.getTime() + timelineValue * stepSize);
+		const unix = startTime.getTime() + timelineValue * stepSize;
+		currentTime = new Date(unix);
+
+		const quakes = quakesCloseTo(unix, stepSize);
+
+		for (const { index } of quakes) {
+			const { mesh, dot } = quakeModels[index];
+
+			if (mesh) {
+				mesh.visible = true;
+
+				// spawn an earthquake on the mesh position and animate it
+				playEarthquake(mesh, dot, 0.2);
+			}
+
+			if (dot) {
+				dot.visible = true;
+			}
+		}
 	}
+
+	function playEarthquake(
+		mesh: THREE.Mesh,
+		dot: THREE.Points,
+		magnitude: number
+	) {
+		mesh.visible = true;
+		dot.visible = true;
+
+		const originalPosition = mesh.position.clone();
+
+		const sphere = new THREE.Mesh(
+			new THREE.SphereGeometry(magnitude, 32, 32),
+			new THREE.MeshBasicMaterial({ color: 0x000000 })
+		);
+		dot.add(sphere);
+
+		// move the sphere to the surface of the moon
+		// the `dot` is currently a little bit higher than the moon surface,
+		// so move it closer to (0, 0, 0) in the correct direction
+		const startPosition = originalPosition
+			.sub(dot.position)
+			.normalize()
+			.multiplyScalar(0.95);
+
+		const animation = setInterval(() => {
+			// every iteration, increase the sphere radius until it reaches the magnitude,
+			// and shake the sphere
+
+			const x = Math.random() * 0.02;
+			const y = Math.random() * 0.02;
+			const z = Math.random() * 0.02;
+
+			sphere.position.set(
+				startPosition.x + x,
+				startPosition.y + y,
+				startPosition.z + z
+			);
+		}, 10);
+
+		setTimeout(() => {
+			clearInterval(animation);
+			sphere.visible = false;
+		}, 1000);
+
+		setTimeout(() => {
+			mesh.visible = false;
+			dot.visible = false;
+
+			dot.remove(sphere);
+		}, 2000);
+
+		return animation;
+	}
+
 	$: if (moon && axesHelper) {
 		if (showAxes) moon.add(axesHelper);
 		else moon.remove(axesHelper);
@@ -65,6 +157,13 @@
 			material.needsUpdate = true;
 		}
 	}
+	$: if (moon && moonlines) {
+		if (uselonglat) {
+			moon.add(moonlines);
+		} else {
+			moon.remove(moonlines);
+		}
+	}
 
 	function clearTimeline() {
 		clearInterval(lastPlayed);
@@ -80,7 +179,7 @@
 		}, 10);
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		document.addEventListener('contextmenu', (e) => {
 			e.preventDefault();
 		});
@@ -101,14 +200,20 @@
 			1000
 		);
 
-		const models = createScene(scene);
+		const models = await createScene(scene);
 
 		moon = models.moon;
 		light = models.light;
 		skybox = models.skybox;
 		axesHelper = models.axesHelper;
 		moonNormalMap = models.moonNormalMap;
+		quakeModels = models.dots;
+		moonlines = models.moonlines;
 		camera.position.z = 3;
+		landerModels = models.landerMeshes;
+
+		startTime = new Date(quakes[0].date);
+		endTime = new Date(quakes.at(-1).date);
 
 		function animate() {
 			requestAnimationFrame(animate);
@@ -118,8 +223,13 @@
 				moon.rotation.y += 0.001;
 				moon.rotation.x += 0.0005;
 			}
-			console.log(firstPerson);
-			for (const { mesh, dot } of models.dots) {
+			for (const { mesh } of models.dots) {
+				let position = new THREE.Vector3();
+				position.setFromMatrixPosition(mesh.matrixWorld);
+				mesh.lookAt(position.x, position.y, 3);
+			}
+
+			for (const { mesh } of models.landerMeshes) {
 				let position = new THREE.Vector3();
 				position.setFromMatrixPosition(mesh.matrixWorld);
 				mesh.lookAt(position.x, position.y, 3);
@@ -236,15 +346,23 @@
 	}
 </script>
 
-<svelte:window on:wheel={onMouseScroll} bind:innerWidth bind:innerHeight />
+<svelte:window bind:innerWidth bind:innerHeight />
 
 <canvas
 	bind:this={renderCanvas}
 	on:mousemove={onMouseMove}
 	on:mousedown={onMouseDown}
+	on:wheel={onMouseScroll}
 />
 
-<Controls bind:lightIntensity bind:showAxes bind:useNormalMap />
+<Controls
+	bind:lightIntensity
+	bind:showAxes
+	bind:useNormalMap
+	bind:uselonglat
+	bind:showLanders
+	bind:enableTable
+/>
 
 <div class="absolute top-2 right-2 text-white rounded-full p-3">
 	{MONTHS[currentTime.getMonth()]}
@@ -276,4 +394,8 @@
 			class="range w-full max-w-sm"
 		/>
 	</div>
+</div>
+
+<div class:hidden={!enableTable} class="absolute bottom-0 right-0">
+	<DataTable />
 </div>

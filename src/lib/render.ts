@@ -1,6 +1,7 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-import quakes from '$lib/quakedata';
+import quakes, { landers } from '$lib/quakedata';
 
 type Quake = {
 	type: string;
@@ -9,7 +10,7 @@ type Quake = {
 	date: number;
 };
 
-export function createScene(scene: THREE.Scene) {
+export async function createScene(scene: THREE.Scene) {
 	const skyboxTexture = new THREE.TextureLoader().load('/stars.jpg');
 	const skyboxGeometry = new THREE.SphereGeometry(10);
 	const skyboxMaterial = new THREE.MeshBasicMaterial({ map: skyboxTexture });
@@ -22,7 +23,7 @@ export function createScene(scene: THREE.Scene) {
 	);
 
 	const moonNormalMap = new THREE.TextureLoader().load('/ldem_16_uint.jpg');
-	const moonGeometry = new THREE.SphereGeometry(1, 50, 50);
+	const moonGeometry = new THREE.SphereGeometry(1, 30, 30);
 	const moonMaterial = new THREE.MeshStandardMaterial({
 		map: moonTexture,
 		normalMap: moonNormalMap,
@@ -39,6 +40,11 @@ export function createScene(scene: THREE.Scene) {
 
 	const axesHelper = new THREE.AxesHelper(5000);
 	moon.add(axesHelper);
+
+	const moonedges = new THREE.EdgesGeometry(moonGeometry, 0.01);
+	const moonlines = new THREE.LineSegments(moonedges, new THREE.LineBasicMaterial({color: 0xffffff, linewidth: 5}));
+	moon.add(moonlines);
+
 
 	const dots = quakes.map((quake: Quake) => {
 		const dotGeometry = new THREE.BufferGeometry();
@@ -57,10 +63,37 @@ export function createScene(scene: THREE.Scene) {
 		mesh.position.set(pos.x, pos.y + 0.02, pos.z);
 		dot.add(mesh);
 
+		dot.visible = false;
+		mesh.visible = false;
+
 		dot.add(mesh);
 		moon.add(dot);
 
 		return { mesh, dot };
+	});
+
+	const landerLoader = new GLTFLoader();
+	const landerModel = await new Promise<THREE.Group>(r => landerLoader.load('/models/lunar_lander/scene.gltf', gltf => r(gltf.scene)));
+
+	landerModel.scale.set(0.03, 0.03, 0.03);
+
+	const landerMeshes = landers.map(lander => {
+		const pos = positionToCoordinates(lander.lat, lander.long, 1.2, 0);
+		const surfacePos = positionToCoordinates(lander.lat, lander.long, 1, 0);
+
+		const landerMesh = landerModel.clone();
+
+		landerMesh.position.set(surfacePos.x, surfacePos.y, surfacePos.z);
+		landerMesh.lookAt(0, 0, 0);
+		landerMesh.rotateX(Math.PI / 2);
+
+		const mesh = text(lander.type, 0.07, 0.07, 100);
+		mesh.position.set(pos.x, pos.y, pos.z);
+
+		moon.add(mesh);
+		moon.add(landerMesh);
+
+		return { mesh, landerMesh };
 	});
 
 	return {
@@ -70,6 +103,8 @@ export function createScene(scene: THREE.Scene) {
 		axesHelper,
 		moonNormalMap,
 		dots,
+		landerMeshes,
+		moonlines,
 	};
 }
 
