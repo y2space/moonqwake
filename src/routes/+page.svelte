@@ -20,6 +20,7 @@
 	let landerModels: { mesh: THREE.Mesh; landerMesh: THREE.Group }[] = [];
 	let lightParent: THREE.Mesh;
 	let scene: THREE.Scene;
+	let exclamationPointModel: THREE.Group;
 
 	let lightIntensity: number;
 	let showAxes = false;
@@ -96,20 +97,33 @@
 		dot.visible = true;
 
 		const originalPosition = mesh.position.clone();
+		const exclamationPoint = exclamationPointModel.clone();
 
 		const sphere = new THREE.Mesh(
 			new THREE.SphereGeometry(magnitude, 32, 32),
 			new THREE.MeshBasicMaterial({ color: 0x000000 })
 		);
 		dot.add(sphere);
+		dot.add(exclamationPoint);
 
 		// move the sphere to the surface of the moon
 		// the `dot` is currently a little bit higher than the moon surface,
 		// so move it closer to (0, 0, 0) in the correct direction
-		const startPosition = originalPosition
-			.sub(dot.position)
-			.normalize()
-			.multiplyScalar(0.95);
+		const moonSurfacePosition = originalPosition.sub(dot.position).normalize();
+
+		const exclamationPointPosition = moonSurfacePosition
+			.clone()
+			.multiplyScalar(1.5);
+		const startPosition = moonSurfacePosition.clone().multiplyScalar(0.95);
+
+		exclamationPoint.position.set(
+			exclamationPointPosition.x,
+			exclamationPointPosition.y,
+			exclamationPointPosition.z
+		);
+
+		exclamationPoint.lookAt(new THREE.Vector3());
+		exclamationPoint.rotateX(-Math.PI / 2);
 
 		const animation = setInterval(() => {
 			// every iteration, increase the sphere radius until it reaches the magnitude,
@@ -128,15 +142,14 @@
 
 		setTimeout(() => {
 			clearInterval(animation);
-			sphere.visible = false;
-		}, 1000);
+			dot.remove(sphere);
+			dot.visible = false;
+		}, 5000);
 
 		setTimeout(() => {
 			mesh.visible = false;
-			dot.visible = false;
-
-			dot.remove(sphere);
-		}, 2000);
+			dot.remove(exclamationPoint);
+		}, 2500);
 
 		return animation;
 	}
@@ -181,7 +194,7 @@
 	}
 
 	onMount(async () => {
-		document.addEventListener('contextmenu', (e) => {
+		document.addEventListener('contextmenu', e => {
 			e.preventDefault();
 		});
 
@@ -213,6 +226,7 @@
 		lightParent = models.lightParent;
 		camera.position.z = 3;
 		landerModels = models.landerMeshes;
+		exclamationPointModel = models.exclamationPointModel;
 
 		startTime = new Date(quakes[0].date);
 		endTime = new Date(quakes.at(-1).date);

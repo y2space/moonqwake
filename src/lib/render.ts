@@ -27,7 +27,7 @@ export async function createScene(scene: THREE.Scene) {
 	scene.add(lightParent);
 
 	const moonNormalMap = new THREE.TextureLoader().load('/ldem_16_uint.jpg');
-	const moonGeometry = new THREE.SphereGeometry(1, 30, 30);
+	const moonGeometry = new THREE.SphereGeometry(1, 60, 60);
 	const moonMaterial = new THREE.MeshStandardMaterial({
 		map: moonTexture,
 		normalMap: moonNormalMap,
@@ -45,10 +45,11 @@ export async function createScene(scene: THREE.Scene) {
 	const axesHelper = new THREE.AxesHelper(5000);
 	moon.add(axesHelper);
 
-	const moonedges = new THREE.EdgesGeometry(moonGeometry, 0.01);
+	const mooninvis = new THREE.SphereGeometry(1.006, 30, 30);
+	const moonedges = new THREE.EdgesGeometry(mooninvis, 0.01);
 	const moonlines = new THREE.LineSegments(
 		moonedges,
-		new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 5 })
+		new THREE.LineBasicMaterial({ color: 0xffffff, linejoin: 'round' })
 	);
 	moon.add(moonlines);
 
@@ -84,8 +85,14 @@ export async function createScene(scene: THREE.Scene) {
 			r(gltf.scene)
 		)
 	);
+	const exclamationPointModel = await new Promise<THREE.Group>((r) =>
+		landerLoader.load('/models/exclamation_point/scene.gltf', (gltf) =>
+			r(gltf.scene)
+		)
+	);
 
 	landerModel.scale.set(0.03, 0.03, 0.03);
+	exclamationPointModel.scale.set(0.03, 0.03, 0.03);
 
 	const landerMeshes = landers.map((lander) => {
 		const pos = positionToCoordinates(lander.lat, lander.long, 1.2, 0);
@@ -116,6 +123,7 @@ export async function createScene(scene: THREE.Scene) {
 		landerMeshes,
 		moonlines,
 		lightParent,
+		exclamationPointModel,
 	};
 }
 
