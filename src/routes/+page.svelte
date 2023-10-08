@@ -189,6 +189,7 @@
 		lastPlayed = setInterval(() => {
 			if (timelineValue + 10 >= TIME_STEPS) {
 				playTimeline = false;
+				timelineValue = 0;
 
 				return clearTimeline();
 			}
