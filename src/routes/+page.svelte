@@ -153,7 +153,7 @@
 		}, 10);
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		const scene = new THREE.Scene();
 		renderer = new THREE.WebGL1Renderer({
 			canvas: renderCanvas,
@@ -170,7 +170,7 @@
 			1000
 		);
 
-		const models = createScene(scene);
+		const models = await createScene(scene);
 
 		moon = models.moon;
 		light = models.light;

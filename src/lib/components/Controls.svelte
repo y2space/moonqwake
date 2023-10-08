@@ -12,11 +12,11 @@
 		>
 			<div class="col-span-3">
 				World Axes
-				<br />X-axis :
+				<br />X-axis:
 				<span class="text-red-400">Red</span>
-				<br />Y-axis :
+				<br />Y-axis:
 				<span class="text-green-400">Green</span>
-				<br />Z-axis :
+				<br />Z-axis:
 				<span class="text-blue-400">Blue</span>
 			</div>
 			<input

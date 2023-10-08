@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 import quakes, { landers } from '$lib/quakedata';
 
@@ -9,7 +10,7 @@ type Quake = {
 	date: number;
 };
 
-export function createScene(scene: THREE.Scene) {
+export async function createScene(scene: THREE.Scene) {
 	const skyboxTexture = new THREE.TextureLoader().load('/stars.jpg');
 	const skyboxGeometry = new THREE.SphereGeometry(10);
 	const skyboxMaterial = new THREE.MeshBasicMaterial({ map: skyboxTexture });
@@ -66,19 +67,16 @@ export function createScene(scene: THREE.Scene) {
 		return { mesh, dot };
 	});
 
+	const landerLoader = new GLTFLoader();
+	const landerModel = await new Promise<THREE.Group>(r => landerLoader.load('/models/lunar_lander/scene.gltf', gltf => r(gltf.scene)));
+
+	landerModel.scale.set(0.03, 0.03, 0.03);
+
 	const landerMeshes = landers.map(lander => {
-		const pos = positionToCoordinates(lander.lat, lander.long, 1.1, 0);
+		const pos = positionToCoordinates(lander.lat, lander.long, 1.2, 0);
 		const surfacePos = positionToCoordinates(lander.lat, lander.long, 1, 0);
 
-		const landerGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.1, 50);
-
-		const landerMaterial = new THREE.MeshStandardMaterial({
-			color: 0x00ff00,
-			roughness: 0.5,
-			metalness: 0.1,
-		});
-
-		const landerMesh = new THREE.Mesh(landerGeometry, landerMaterial);
+		const landerMesh = landerModel.clone();
 
 		landerMesh.position.set(surfacePos.x, surfacePos.y, surfacePos.z);
 		landerMesh.lookAt(0, 0, 0);
