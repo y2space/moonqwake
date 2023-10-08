@@ -13,11 +13,13 @@
 	let renderer: THREE.WebGL1Renderer;
 	let axesHelper: THREE.AxesHelper;
 	let moonNormalMap: THREE.Texture;
+	let scene: THREE.Scene;
 
 	let lightIntensity: number;
 	let showAxes = false;
 	let useNormalMap = true;
 
+	let firstPerson = false;
 	let currentTime = new Date();
 	let playTimeline = false;
 	let timelineValue = 0;
@@ -79,7 +81,11 @@
 	}
 
 	onMount(() => {
-		const scene = new THREE.Scene();
+		document.addEventListener('contextmenu', (e) => {
+			e.preventDefault();
+		});
+
+		scene = new THREE.Scene();
 		renderer = new THREE.WebGL1Renderer({
 			canvas: renderCanvas,
 			antialias: true,
@@ -108,10 +114,11 @@
 			requestAnimationFrame(animate);
 			renderer.render(scene, camera);
 
-			if (!usedManual) {
+			if (!usedManual && !firstPerson) {
 				moon.rotation.y += 0.001;
 				moon.rotation.x += 0.0005;
 			}
+			console.log(firstPerson);
 			for (const { mesh, dot } of models.dots) {
 				let position = new THREE.Vector3();
 				position.setFromMatrixPosition(mesh.matrixWorld);
@@ -129,12 +136,13 @@
 	function onMouseScroll(event: WheelEvent) {
 		event.preventDefault();
 
-		const zoom = Math.min(
-			8,
-			Math.max(1.5, camera.position.z + (Math.sign(event.deltaY) * 70) / 1000)
-		);
-		camera.position.z = zoom;
-		console.log(event.deltaY);
+		if (!firstPerson) {
+			const zoom = Math.min(
+				8,
+				Math.max(1.5, camera.position.z + (Math.sign(event.deltaY) * 70) / 1000)
+			);
+			camera.position.z = zoom;
+		}
 	}
 
 	function onMouseMove(event: MouseEvent) {
@@ -163,7 +171,7 @@
 			dragEnd = { x: skybox.rotation.x, y: skybox.rotation.y };
 
 			usedManual = true;
-		} else {
+		} else if (!firstPerson) {
 			function clamp(x: number, a: number, b: number) {
 				return Math.min(Math.max(x, b), a);
 			}
@@ -181,11 +189,60 @@
 
 		dragStart = { x: event.clientX, y: event.clientY };
 	}
+
+	function onMouseDown(event: MouseEvent) {
+		if (event.buttons === 2) {
+			if (!firstPerson) {
+				const raycaster = new THREE.Raycaster();
+				const px = (event.clientX / window.innerWidth) * 2 - 1;
+				const py = -(event.clientY / window.innerHeight) * 2 + 1;
+
+				const pointer = { x: px, y: py };
+
+				raycaster.setFromCamera(pointer, camera);
+
+				const intersects = raycaster.intersectObjects(scene.children);
+
+				for (let i = 0; i < intersects.length; i++) {
+					if (intersects[i].object.uuid === moon.uuid) {
+						console.log('Hit moon!');
+						console.log(intersects[i]);
+						const moonIntersection = intersects[i];
+
+						const pos = new THREE.Vector3(
+							moonIntersection.point.x,
+							moonIntersection.point.y,
+							moonIntersection.point.z
+						);
+
+						const posScaled = pos.multiplyScalar(1.15);
+						camera.position.set(posScaled.x, posScaled.y, posScaled.z);
+
+						const plane = new THREE.Plane(pos);
+						const target = new THREE.Vector3();
+
+						camera.lookAt(plane.coplanarPoint(target));
+						camera.rotateX(45);
+						firstPerson = true;
+					}
+				}
+			} else {
+				firstPerson = false;
+
+				camera.position.set(0, 0, 3);
+				camera.lookAt(0, 0, 0);
+			}
+		}
+	}
 </script>
 
 <svelte:window on:wheel={onMouseScroll} bind:innerWidth bind:innerHeight />
 
-<canvas bind:this={renderCanvas} on:mousemove={onMouseMove} />
+<canvas
+	bind:this={renderCanvas}
+	on:mousemove={onMouseMove}
+	on:mousedown={onMouseDown}
+/>
 
 <Controls bind:lightIntensity bind:showAxes bind:useNormalMap />
 

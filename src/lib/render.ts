@@ -53,7 +53,7 @@ export function createScene(scene: THREE.Scene) {
 		});
 		const dot = new THREE.Points(dotGeometry, dotMaterial);
 
-		const mesh = text(quake.type, 0.05, 0.05, 100, 0xcccccc);
+		const mesh = text(quake.type, 0.05, 0.05, 100);
 		mesh.position.set(pos.x, pos.y + 0.02, pos.z);
 		dot.add(mesh);
 
