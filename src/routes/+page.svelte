@@ -390,7 +390,7 @@
 							moonIntersection.point.z
 						);
 
-						const posScaled = pos.multiplyScalar(1.1);
+						const posScaled = pos.multiplyScalar(1.13);
 						const camposition = { x: 0, y: 0, z: 3 };
 						const cameraCloned = camera.clone();
 
@@ -399,8 +399,7 @@
 
 						cameraCloned.position.set(posScaled.x, posScaled.y, posScaled.z);
 						cameraCloned.lookAt(plane.coplanarPoint(target));
-						cameraCloned.rotateX(Math.PI / 2);
-						console.log(camera.rotation, cameraCloned.rotation);
+						cameraCloned.rotateX(Math.PI / 2.5);
 
 						const zoomin = new TWEEN.Tween(camposition)
 							.to({ x: posScaled.x, y: posScaled.y, z: posScaled.z })
@@ -430,10 +429,36 @@
 					}
 				}
 			} else {
-				firstPerson = false;
+				const cameraCloned = camera.clone();
+				const camposition = {
+					x: camera.position.x,
+					y: camera.position.y,
+					z: camera.position.z,
+				};
+				cameraCloned.position.set(0, 0, 3);
+				cameraCloned.lookAt(0, 0, 0);
 
-				camera.position.set(0, 0, 3);
-				camera.lookAt(0, 0, 0);
+				const zoomin = new TWEEN.Tween(camposition)
+					.to({ x: 0, y: 0, z: 3 })
+					.onUpdate(() => {
+						camera.position.set(camposition.x, camposition.y, camposition.z);
+					})
+					.start();
+				const camerastartrotation = camera.rotation.clone();
+				const rotatezoom = new TWEEN.Tween(camerastartrotation)
+					.to(cameraCloned.rotation)
+					.onUpdate(() => {
+						camera.rotation.set(
+							camerastartrotation.x,
+							camerastartrotation.y,
+							camerastartrotation.z
+						);
+					})
+					.start();
+				zoomin.onComplete(() => {
+					firstPerson = false;
+					cameraStartPosition = camera.position.clone();
+				});
 			}
 		}
 	}
