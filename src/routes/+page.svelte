@@ -28,6 +28,7 @@
 	let uselonglat = false;
 	let showLanders = true;
 	let enableTable = false;
+	let openWelcomeModal = true;
 
 	let firstPerson = false;
 	let currentTime = new Date();
@@ -104,6 +105,7 @@
 
 		soundMap.set(index, earthquakeSound);
 		const audioLoader = new THREE.AudioLoader();
+
 		audioLoader.load('/sounds/rumble.mp3', (buffer) => {
 			earthquakeSound.setBuffer(buffer);
 			earthquakeSound.setLoop(false);
@@ -416,6 +418,27 @@
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight on:keypress={onKeyPress} />
+<!-- Open the modal using ID.showModal() method -->
+<!-- The button to open modal -->
+<button
+	class="btn absolute bottom-0 left-2"
+	on:click={() => (openWelcomeModal = true)}>Instructions</button
+>
+
+<!-- Put this part before </body> tag -->
+<input type="checkbox" id="my_modal_7" class="modal-toggle" />
+<div class="modal" class:modal-open={openWelcomeModal}>
+	<div class="modal-box">
+		<h3 class="text-lg font-bold">Welcome to Moonqwake!</h3>
+		<p class="py-4">
+			To change settings, go to controls! <br />To enter first person, right
+			click on the moon!
+		</p>
+	</div>
+	<button class="modal-backdrop" on:click={() => (openWelcomeModal = false)}
+		>Close</button
+	>
+</div>
 
 <canvas
 	bind:this={renderCanvas}
