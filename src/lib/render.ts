@@ -31,5 +31,6 @@ export function createScene(scene: THREE.Scene) {
 		moon,
 		skybox,
 		axesHelper,
+		moonNormalMap,
 	};
 }

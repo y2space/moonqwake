@@ -1,6 +1,7 @@
 <script lang="ts">
 	export let lightIntensity = 1.4 * 20;
 	export let showAxes = false;
+	export let useNormalMap = true;
 </script>
 
 <div class="absolute top-2 left-2">
@@ -26,7 +27,11 @@
 			<div class="col-span-3">Longitude & Latitude</div>
 			<input type="checkbox" class="toggle toggle-success" checked />
 			<div class="col-span-3">Height Map</div>
-			<input type="checkbox" class="toggle toggle-warning" checked />
+			<input
+				type="checkbox"
+				class="toggle toggle-warning"
+				bind:checked={useNormalMap}
+			/>
 			<div class="col-span-3">Apollo Landers</div>
 			<input type="checkbox" class="toggle toggle-info" checked />
 			<div class="col-span-3">Seas & Oceans</div>

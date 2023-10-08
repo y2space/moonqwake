@@ -13,9 +13,11 @@
 	let skybox: THREE.Mesh;
 	let renderer: THREE.WebGL1Renderer;
 	let axesHelper: THREE.AxesHelper;
+	let moonNormalMap: THREE.Texture;
 
 	let lightIntensity: number;
 	let showAxes = false;
+	let useNormalMap = true;
 
 	let currentTime = new Date();
 	let playTimeline = false;
@@ -48,6 +50,20 @@
 	$: if (moon && axesHelper) {
 		if (showAxes) moon.add(axesHelper);
 		else moon.remove(axesHelper);
+	}
+	$: {
+		console.log({ moon, moonNormalMap });
+		if (moon && moonNormalMap) {
+			const material = moon.material as THREE.MeshStandardMaterial;
+
+			if (useNormalMap) {
+				material.normalMap = moonNormalMap;
+			} else {
+				material.normalMap = null;
+			}
+
+			material.needsUpdate = true;
+		}
 	}
 
 	function clearTimeline() {
@@ -87,6 +103,7 @@
 		light = models.light;
 		skybox = models.skybox;
 		axesHelper = models.axesHelper;
+		moonNormalMap = models.moonNormalMap;
 		camera.position.z = 3;
 
 		function animate() {
@@ -167,7 +184,7 @@
 
 <canvas bind:this={renderCanvas} on:mousemove={onMouseMove} />
 
-<Controls bind:lightIntensity bind:showAxes />
+<Controls bind:lightIntensity bind:showAxes bind:useNormalMap />
 
 <div class="absolute top-2 right-2 text-white rounded-full p-3">
 	{MONTHS[currentTime.getMonth()]}
