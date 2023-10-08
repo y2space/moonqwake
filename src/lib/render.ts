@@ -12,7 +12,7 @@ type Quake = {
 
 export async function createScene(scene: THREE.Scene) {
 	const skyboxTexture = new THREE.TextureLoader().load('/stars.jpg');
-	const skyboxGeometry = new THREE.SphereGeometry(10);
+	const skyboxGeometry = new THREE.SphereGeometry(30);
 	const skyboxMaterial = new THREE.MeshBasicMaterial({ map: skyboxTexture });
 	const skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
 
