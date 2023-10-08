@@ -15,6 +15,7 @@ export async function createScene(scene: THREE.Scene) {
 	const skyboxGeometry = new THREE.SphereGeometry(10);
 	const skyboxMaterial = new THREE.MeshBasicMaterial({ map: skyboxTexture });
 	const skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
+
 	skybox.material.side = THREE.DoubleSide;
 	scene.add(skybox);
 

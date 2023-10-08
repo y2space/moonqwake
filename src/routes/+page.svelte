@@ -40,6 +40,7 @@
 
 	let startTime = new Date(0);
 	let endTime = new Date(Date.now());
+	let listener: THREE.AudioListener;
 
 	const TIME_STEPS = 25_000;
 
@@ -95,6 +96,15 @@
 		dot: THREE.Points,
 		magnitude: number
 	) {
+		const earthquakeSound = new THREE.Audio(listener);
+
+		const audioLoader = new THREE.AudioLoader();
+		audioLoader.load('/sounds/rumble.mp3', (buffer) => {
+			earthquakeSound.setBuffer(buffer);
+			earthquakeSound.setLoop(false);
+			earthquakeSound.setVolume(1);
+			earthquakeSound.play();
+		});
 		mesh.visible = true;
 		dot.visible = true;
 
@@ -146,6 +156,7 @@
 			clearInterval(animation);
 			dot.remove(sphere);
 			dot.visible = false;
+			earthquakeSound.stop();
 		}, 5000);
 
 		setTimeout(() => {
@@ -199,7 +210,7 @@
 	}
 
 	onMount(async () => {
-		document.addEventListener('contextmenu', e => {
+		document.addEventListener('contextmenu', (e) => {
 			e.preventDefault();
 		});
 
@@ -218,6 +229,9 @@
 			0.1,
 			1000
 		);
+
+		listener = new THREE.AudioListener();
+		camera.add(listener);
 
 		const models = await createScene(scene);
 
@@ -311,7 +325,7 @@
 			dragEnd = { x: skybox.rotation.x, y: skybox.rotation.y };
 
 			usedManual = true;
-		} else if (!firstPerson) {
+		} else if (!firstPerson && skybox) {
 			function clamp(x: number, a: number, b: number) {
 				return Math.min(Math.max(x, b), a);
 			}

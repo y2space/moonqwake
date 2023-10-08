@@ -52,12 +52,12 @@
 				bind:checked={enableTable}
 			/>
 			<div class="col-span-4">
-				Light Intensity <br />
+				Light Intensity
 				<input
 					type="range"
 					min="1"
 					max="10"
-					class="range range-success range-xs"
+					class="range range-success range-xs my-4"
 					bind:value={lightIntensity}
 				/>
 			</div>
