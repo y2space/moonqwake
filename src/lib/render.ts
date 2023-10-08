@@ -22,6 +22,9 @@ export async function createScene(scene: THREE.Scene) {
 	const moonTexture = new THREE.TextureLoader().load(
 		'/lroc_color_poles_4k.jpg'
 	);
+	const sunTexture = new THREE.TextureLoader().load(
+		'/2k_sun.jpeg'
+	);
 
 	const lightParentGeometry = new THREE.SphereGeometry(10);
 	const lightParent = new THREE.Mesh(lightParentGeometry);
@@ -39,7 +42,16 @@ export async function createScene(scene: THREE.Scene) {
 	const moon = new THREE.Mesh(moonGeometry, moonMaterial);
 	scene.add(moon);
 
+
 	const light = new THREE.DirectionalLight(0xffffff, 1.4);
+	
+	
+	const sunGeometry = new THREE.SphereGeometry(0.3, 10, 10);
+	const sunMaterial = new THREE.MeshBasicMaterial({
+		map: sunTexture,
+	})
+	const sunMesh = new THREE.Mesh(sunGeometry, sunMaterial);
+	light.add(sunMesh);
 	light.position.set(0, 0, 1);
 	lightParent.add(light);
 
