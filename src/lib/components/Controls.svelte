@@ -34,8 +34,6 @@
 			/>
 			<div class="col-span-3">Apollo Landers</div>
 			<input type="checkbox" class="toggle toggle-info" checked />
-			<div class="col-span-3">Seas & Oceans</div>
-			<input type="checkbox" class="toggle toggle-error" checked />
 			<div class="col-span-4">
 				Light Intensity <br />
 				<input
