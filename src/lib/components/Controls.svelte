@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let lightIntensity = 1.4 * 20;
+	export let lightIntensity = 10;
 	export let showAxes = false;
 	export let useNormalMap = true;
 </script>
@@ -40,8 +40,8 @@
 				Light Intensity <br />
 				<input
 					type="range"
-					min="10"
-					max="100"
+					min="1"
+					max="10"
 					class="range range-success range-xs"
 					bind:value={lightIntensity}
 				/>

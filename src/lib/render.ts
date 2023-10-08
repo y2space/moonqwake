@@ -42,19 +42,19 @@ export function createScene(scene: THREE.Scene) {
 
 	const dots = quakes.map((quake: Quake) => {
 		const dotGeometry = new THREE.BufferGeometry();
-		const pos = positionToCoordinates(quake.lat, quake.long, 1.2, 0);
+		const pos = positionToCoordinates(quake.lat, quake.long, 1.03, 0);
 		dotGeometry.setAttribute(
 			'position',
 			new THREE.BufferAttribute(new Float32Array([pos.x, pos.y, pos.z]), 3)
 		);
 		const dotMaterial = new THREE.PointsMaterial({
-			size: 0.1,
-			color: 0xff0000,
+			size: 0.01,
+			color: 0xffffff,
 		});
 		const dot = new THREE.Points(dotGeometry, dotMaterial);
 
-		const mesh = text("Hello, world", 0.05, 0.05, 100, 0xcccccc);
-		mesh.position.set(pos.x, pos.y, pos.z);
+		const mesh = text(quake.type, 0.05, 0.05, 100, 0xcccccc);
+		mesh.position.set(pos.x, pos.y + 0.02, pos.z);
 		dot.add(mesh);
 
 		moon.add(dot);
@@ -71,7 +71,6 @@ export function createScene(scene: THREE.Scene) {
 		dots,
 	};
 }
-
 
 function text(txt, hWorldTxt, hWorldAll, hPxTxt, fgcolor, bgcolor) {
 	// the routine
