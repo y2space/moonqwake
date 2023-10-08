@@ -8,7 +8,7 @@
 	}
 </script>
 
-<div class="overflow-x-auto">
+<div class="overflow-x-auto max-h-96">
 	<table class="table table-xs table-pin-rows table-pin-cols">
 		<thead>
 			<tr>
@@ -26,12 +26,5 @@
 				</tr>
 			{/each}
 		</tbody>
-		<tfoot>
-			<tr>
-				<th />
-				<td>Date</td>
-				<td>Name</td>
-			</tr>
-		</tfoot>
 	</table>
 </div>

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import Controls from '$lib/components/Controls.svelte';
-	import DataTable from '$lib/components/DataTable.svelte';
-	import { MONTHS } from '$lib/constants';
-	import quakes, { quakesCloseTo, landers } from '$lib/quakedata';
-	import { createScene } from '$lib/render';
-	import { onMount } from 'svelte';
-	import * as THREE from 'three';
+	import Controls from "$lib/components/Controls.svelte";
+	import DataTable from "$lib/components/DataTable.svelte";
+	import { MONTHS } from "$lib/constants";
+	import quakes, { quakesCloseTo, landers } from "$lib/quakedata";
+	import { createScene } from "$lib/render";
+	import { onMount } from "svelte";
+	import * as THREE from "three";
 
 	let renderCanvas: HTMLCanvasElement;
 	let moon: THREE.Mesh;
@@ -24,6 +24,7 @@
 	let useNormalMap = true;
 	let uselonglat = false;
 	let showLanders = true;
+	let enableTable = false;
 
 	let currentTime = new Date();
 	let playTimeline = false;
@@ -255,7 +256,7 @@
 						((event.clientY - dragStart.y) * Math.PI) / 180,
 						((event.clientX - dragStart.x) * Math.PI) / 180,
 						0,
-						'XYZ'
+						"XYZ"
 					)
 				)
 				.normalize();
@@ -293,9 +294,13 @@
 	}
 </script>
 
-<svelte:window on:wheel={onMouseScroll} bind:innerWidth bind:innerHeight />
+<svelte:window bind:innerWidth bind:innerHeight />
 
-<canvas bind:this={renderCanvas} on:mousemove={onMouseMove} />
+<canvas
+	bind:this={renderCanvas}
+	on:mousemove={onMouseMove}
+	on:wheel={onMouseScroll}
+/>
 
 <Controls
 	bind:lightIntensity
@@ -303,6 +308,7 @@
 	bind:useNormalMap
 	bind:uselonglat
 	bind:showLanders
+	bind:enableTable
 />
 
 <div class="absolute top-2 right-2 text-white rounded-full p-3">
@@ -335,4 +341,8 @@
 			class="range w-full max-w-sm"
 		/>
 	</div>
+</div>
+
+<div class:hidden={!enableTable} class="absolute bottom-0 right-0">
+	<DataTable />
 </div>

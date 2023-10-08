@@ -4,6 +4,7 @@
 	export let useNormalMap = true;
 	export let uselonglat = false;
 	export let showLanders = true;
+	export let enableTable = false;
 </script>
 
 <div class="absolute top-2 left-2">
@@ -14,11 +15,11 @@
 		>
 			<div class="col-span-3">
 				World Axes
-				<br />X-axis:
+				<br />X-axis :
 				<span class="text-red-400">Red</span>
-				<br />Y-axis:
+				<br />Y-axis :
 				<span class="text-green-400">Green</span>
-				<br />Z-axis:
+				<br />Z-axis :
 				<span class="text-blue-400">Blue</span>
 			</div>
 			<input
@@ -43,6 +44,12 @@
 				type="checkbox"
 				class="toggle toggle-info"
 				bind:checked={showLanders}
+			/>
+			<div class="col-span-3">Earthquakes Table</div>
+			<input
+				type="checkbox"
+				class="toggle toggle-error"
+				bind:checked={enableTable}
 			/>
 			<div class="col-span-4">
 				Light Intensity <br />
