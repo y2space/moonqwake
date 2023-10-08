@@ -15,10 +15,12 @@
 	let axesHelper: THREE.AxesHelper;
 	let moonNormalMap: THREE.Texture;
 	let quakeModels: { mesh: THREE.Mesh; dot: THREE.Points }[] = [];
+	let moonlines: THREE.LineSegments;
 
 	let lightIntensity: number;
 	let showAxes = false;
 	let useNormalMap = true;
+	let uselonglat = false;
 
 	let currentTime = new Date();
 	let playTimeline = false;
@@ -138,6 +140,14 @@
 			material.needsUpdate = true;
 		}
 	}
+	$: if (moon && moonlines) {
+		if (uselonglat) {
+			moon.add(moonlines);
+		}
+		else{
+			moon.remove(moonlines);
+		}
+	}
 
 	function clearTimeline() {
 		clearInterval(lastPlayed);
@@ -178,6 +188,7 @@
 		axesHelper = models.axesHelper;
 		moonNormalMap = models.moonNormalMap;
 		quakeModels = models.dots;
+		moonlines = models.moonlines;
 		camera.position.z = 3;
 
 		startTime = new Date(quakes[0].date);
@@ -272,7 +283,7 @@
 
 <canvas bind:this={renderCanvas} on:mousemove={onMouseMove} />
 
-<Controls bind:lightIntensity bind:showAxes bind:useNormalMap />
+<Controls bind:lightIntensity bind:showAxes bind:useNormalMap bind:uselonglat/>
 
 <div class="absolute top-2 right-2 text-white rounded-full p-3">
 	{MONTHS[currentTime.getMonth()]}

@@ -2,6 +2,7 @@
 	export let lightIntensity = 10;
 	export let showAxes = false;
 	export let useNormalMap = true;
+	export let uselonglat = false;
 </script>
 
 <div class="absolute top-2 left-2">
@@ -25,7 +26,7 @@
 				bind:checked={showAxes}
 			/>
 			<div class="col-span-3">Longitude & Latitude</div>
-			<input type="checkbox" class="toggle toggle-success" checked />
+			<input type="checkbox" class="toggle toggle-success" bind:checked={uselonglat} />
 			<div class="col-span-3">Height Map</div>
 			<input
 				type="checkbox"
