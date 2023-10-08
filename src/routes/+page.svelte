@@ -196,6 +196,12 @@
 				position.setFromMatrixPosition(mesh.matrixWorld);
 				mesh.lookAt(position.x, position.y, 3);
 			}
+
+			for (const { mesh } of models.landerMeshes) {
+				let position = new THREE.Vector3();
+				position.setFromMatrixPosition(mesh.matrixWorld);
+				mesh.lookAt(position.x, position.y, 3);
+			}
 		}
 
 		animate();

@@ -53,7 +53,7 @@ export function createScene(scene: THREE.Scene) {
 		});
 		const dot = new THREE.Points(dotGeometry, dotMaterial);
 
-		const mesh = text(quake.type, 0.05, 0.05, 100, 0xcccccc);
+		const mesh = text(quake.type, 0.05, 0.05, 100);
 		mesh.position.set(pos.x, pos.y + 0.02, pos.z);
 		dot.add(mesh);
 
@@ -66,7 +66,7 @@ export function createScene(scene: THREE.Scene) {
 		return { mesh, dot };
 	});
 
-	for (const lander of landers) {
+	const landerMeshes = landers.map(lander => {
 		const pos = positionToCoordinates(lander.lat, lander.long, 1.1, 0);
 		const surfacePos = positionToCoordinates(lander.lat, lander.long, 1, 0);
 
@@ -89,7 +89,9 @@ export function createScene(scene: THREE.Scene) {
 
 		moon.add(mesh);
 		moon.add(landerMesh);
-	}
+
+		return { mesh, landerMesh };
+	});
 
 	return {
 		light,
@@ -98,6 +100,7 @@ export function createScene(scene: THREE.Scene) {
 		axesHelper,
 		moonNormalMap,
 		dots,
+		landerMeshes
 	};
 }
 
