@@ -1,11 +1,4 @@
-export default [
-	{ type: '12 LM', long: -21.2, lat: -3.94, date: -938580000 },
-	{ type: '13 S-IVB', long: -27.86, lat: -2.75, date: 11599740000 },
-	{ type: '14 S-IVB', long: -26.02, lat: -8.09, date: 36938400000 },
-	{ type: '14 LM', long: -19.67, lat: -3.42, date: 37172700000 },
-	{ type: '15 S-IVB', long: -11.81, lat: -1.51, date: 52361880000 },
-	{ type: '15 LM', long: 0.25, lat: 26.36, date: 52729380000 },
-	{ type: '17 S-IVB', long: -12.31, lat: -4.21, date: 95563920000 },
+const quakes = [
 	{ type: 'M', long: -16.49, lat: 1.2, date: 77287560000 },
 	{ type: 'M', long: 7.23, lat: 23.42, date: 84146880000 },
 	{ type: 'M', long: 20.57, lat: 15.19, date: 86669880000 },
@@ -57,8 +50,26 @@ export default [
 	{ type: 'A50', long: -47.41, lat: 9.36, date: 107586300000 },
 	{ type: 'A51', long: 14.42, lat: 8.63, date: 132845700000 },
 	{ type: 'A97', long: 16.39, lat: -2.36, date: 235562880000 },
-] as const;
+]
+.sort((a, b) => a.date - b.date)
+.map((p, i) => ({
+	...p,
+	index: i,
+}));
 
-function quakesCloseTo(date: number) {
-	
+export const landers = [
+	{ type: '12 LM', long: -21.2, lat: -3.94, date: -938580000 },
+	{ type: '13 S-IVB', long: -27.86, lat: -2.75, date: 11599740000 },
+	{ type: '14 S-IVB', long: -26.02, lat: -8.09, date: 36938400000 },
+	{ type: '14 LM', long: -19.67, lat: -3.42, date: 37172700000 },
+	{ type: '15 S-IVB', long: -11.81, lat: -1.51, date: 52361880000 },
+	{ type: '15 LM', long: 0.25, lat: 26.36, date: 52729380000 },
+	{ type: '17 S-IVB', long: -12.31, lat: -4.21, date: 95563920000 },
+];
+
+export default quakes;
+
+// Returns the quakes that are within `range` of the given date
+export function quakesCloseTo(date: number, range: number) {
+	return quakes.filter(q => Math.abs(q.date - date) <= range);
 }

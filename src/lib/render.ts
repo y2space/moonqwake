@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import quakes from '$lib/quakedata';
+import quakes, { landers } from '$lib/quakedata';
 
 type Quake = {
 	type: string;
@@ -56,11 +56,39 @@ export function createScene(scene: THREE.Scene) {
 		const mesh = text("Hello, world", 0.07, 0.07, 100);
 		mesh.position.set(pos.x, pos.y, pos.z);
 
+		dot.visible = false;
+		mesh.visible = false;
+
 		dot.add(mesh);
 		moon.add(dot);
 
 		return { mesh, dot };
 	});
+
+	for (const lander of landers) {
+		const pos = positionToCoordinates(lander.lat, lander.long, 1.1, 0);
+		const surfacePos = positionToCoordinates(lander.lat, lander.long, 1, 0);
+
+		const landerGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.1, 50);
+
+		const landerMaterial = new THREE.MeshStandardMaterial({
+			color: 0x00ff00,
+			roughness: 0.5,
+			metalness: 0.1,
+		});
+
+		const landerMesh = new THREE.Mesh(landerGeometry, landerMaterial);
+
+		landerMesh.position.set(surfacePos.x, surfacePos.y, surfacePos.z);
+		landerMesh.lookAt(0, 0, 0);
+		landerMesh.rotateX(Math.PI / 2);
+
+		const mesh = text(lander.type, 0.07, 0.07, 100);
+		mesh.position.set(pos.x, pos.y, pos.z);
+
+		moon.add(mesh);
+		moon.add(landerMesh);
+	}
 
 	return {
 		light,
