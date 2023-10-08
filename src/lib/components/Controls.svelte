@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let lightIntensity = 1.4 * 20;
+	export let lightIntensity = 10;
 	export let showAxes = false;
 	export let useNormalMap = true;
 </script>
@@ -8,7 +8,7 @@
 	<details class="dropdown">
 		<summary class="btn">Controls</summary>
 		<ul
-			class="p-5 text-sm shadow dropdown-content z-[1] bg-base-100 rounded-box w-80 grid grid-cols-4 gap-4"
+			class="my-2 p-5 text-sm shadow dropdown-content z-[1] bg-base-100 rounded-box w-80 grid grid-cols-4 gap-4"
 		>
 			<div class="col-span-3">
 				World Axes
@@ -34,14 +34,12 @@
 			/>
 			<div class="col-span-3">Apollo Landers</div>
 			<input type="checkbox" class="toggle toggle-info" checked />
-			<div class="col-span-3">Seas & Oceans</div>
-			<input type="checkbox" class="toggle toggle-error" checked />
 			<div class="col-span-4">
 				Light Intensity <br />
 				<input
 					type="range"
-					min="10"
-					max="100"
+					min="1"
+					max="10"
 					class="range range-success range-xs"
 					bind:value={lightIntensity}
 				/>

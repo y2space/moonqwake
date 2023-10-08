@@ -247,8 +247,8 @@
 				return Math.min(Math.max(x, b), a);
 			}
 
-			const parralaxAmount = 100000;
-			const maxAmount = 0.02;
+			const parralaxAmount = 50000;
+			const maxAmount = 0.5;
 			const deltaY = (window.innerHeight / 2 - event.clientY) / parralaxAmount;
 			const deltaX = (window.innerWidth / 2 - event.clientX) / parralaxAmount;
 
