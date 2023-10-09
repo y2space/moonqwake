@@ -437,6 +437,7 @@
 					}
 				}
 			} else {
+				firstPerson = false;
 				const cameraCloned = camera.clone();
 				const camposition = {
 					x: camera.position.x,
@@ -464,7 +465,6 @@
 					})
 					.start();
 				zoomin.onComplete(() => {
-					firstPerson = false;
 					cameraStartPosition = camera.position.clone();
 				});
 			}
