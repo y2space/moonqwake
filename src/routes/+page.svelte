@@ -96,8 +96,8 @@
 		}
 	}
 
-	$: {
-		timelineValue = selectDate / stepSize;
+	$: if (selectDate) {
+		timelineValue = (selectDate - startTime.getTime()) / stepSize;
 	}
 
 	function playEarthquake(
