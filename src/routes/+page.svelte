@@ -72,6 +72,7 @@
 		camera.aspect = innerWidth / innerHeight;
 		camera.updateProjectionMatrix();
 	}
+
 	$: {
 		const unix = startTime.getTime() + timelineValue * stepSize;
 		currentTime = new Date(unix);
@@ -96,7 +97,10 @@
 		}
 	}
 
-	$: if (selectDate) {
+	let lastSelectDate = 0;
+
+	$: if (selectDate !== lastSelectDate) {
+		lastSelectDate = selectDate;
 		timelineValue = (selectDate - startTime.getTime()) / stepSize;
 	}
 
