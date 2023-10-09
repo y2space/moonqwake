@@ -45,7 +45,7 @@
 				class="toggle toggle-info"
 				bind:checked={showLanders}
 			/>
-			<div class="col-span-3">Earthquakes Table</div>
+			<div class="col-span-3">Moonquakes Table</div>
 			<input
 				type="checkbox"
 				class="toggle toggle-error"
