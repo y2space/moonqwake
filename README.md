@@ -1,6 +1,6 @@
 # MoonqWake
 
-A 3-dimensional moonquake viewer with timeline scrubbing and visual insights.
+A 3-dimensional moonquake viewer with timeline scrubbing and visual insights. You can view the project [here](https://moonqwake.pages.dev/).
 ## Development
 
 ```bash
