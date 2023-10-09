@@ -284,6 +284,7 @@
 				lightParent.rotation.y += 0.05;
 				lightParent.rotation.x += 0.008;
 			}
+
 			for (const { mesh } of models.dots) {
 				let position = new THREE.Vector3();
 				position.setFromMatrixPosition(mesh.matrixWorld);
@@ -338,10 +339,13 @@
 				deltaRotationQuaternion,
 				skybox.quaternion
 			);
-			lightParent.quaternion.multiplyQuaternions(
-				deltaRotationQuaternion,
-				lightParent.quaternion
-			);
+
+			if (!playTimeline) {
+				lightParent.quaternion.multiplyQuaternions(
+					deltaRotationQuaternion,
+					lightParent.quaternion
+				);
+			}
 
 			dragEnd = { x: skybox.rotation.x, y: skybox.rotation.y };
 
@@ -391,7 +395,11 @@
 						);
 
 						const posScaled = pos.multiplyScalar(1.13);
-						const camposition = { x: 0, y: 0, z: 3 };
+						const camposition = {
+							x: camera.position.x,
+							y: camera.position.y,
+							z: camera.position.z,
+						};
 						const cameraCloned = camera.clone();
 
 						const plane = new THREE.Plane(posScaled);
